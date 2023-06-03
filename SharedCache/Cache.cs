@@ -3,7 +3,7 @@ using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Primitives;
 using System.ComponentModel;
 
-namespace GenericCachingRepository
+namespace GenericCachingRepository.SharedCache
 {
     public interface ICache
     {
@@ -44,7 +44,7 @@ namespace GenericCachingRepository
 
         public T? Remove<T>(string? key) where T : class
         {
-            if(string.IsNullOrWhiteSpace(key))
+            if (string.IsNullOrWhiteSpace(key))
                 return null;
             var item = Get<T>(key);
             cache.Remove(key);
@@ -53,7 +53,7 @@ namespace GenericCachingRepository
 
         public T? Get<T>(string? key) where T : class
         {
-            if(string.IsNullOrWhiteSpace(key))
+            if (string.IsNullOrWhiteSpace(key))
                 return null;
             cache.TryGetValue<T>(key, out var item);
             return item;

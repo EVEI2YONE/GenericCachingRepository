@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GenericCachingRepository.SharedCache;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenericCachingRepository
+namespace GenericCachingRepository.SourceCache
 {
     public interface IDbContextCacheRepository
     {
@@ -33,10 +34,10 @@ namespace GenericCachingRepository
         }
 
         private object?[]? GetIds<T>(T? item) where T : class
-            => (item == null) ? null : typeof(T).GetProperties().Where(prop => prop.GetCustomAttributes().Any(attr => ValidKeyAttributes.Contains(attr.GetType()))).Select(prop => prop.GetValue(item)).ToArray();
+            => item == null ? null : typeof(T).GetProperties().Where(prop => prop.GetCustomAttributes().Any(attr => ValidKeyAttributes.Contains(attr.GetType()))).Select(prop => prop.GetValue(item)).ToArray();
 
         private string? GetKeyIds<T>(params object?[]? ids) where T : class
-            => (ids == null || !ids.Any()) ? null : $"{typeof(T).Name}:{string.Join(",", ids)}";
+            => ids == null || !ids.Any() ? null : $"{typeof(T).Name}:{string.Join(",", ids)}";
         private string? GetKey<T>(T? item) where T : class
             => GetKeyIds<T>(GetIds(item));
 
@@ -89,7 +90,7 @@ namespace GenericCachingRepository
                 CopyFromTo(item, itemToUpdate);
                 _dbContext.Update(itemToUpdate);
                 await _dbContext.SaveChangesAsync();
-                _cache.Add<T>(GetKey(itemToUpdate), itemToUpdate);
+                _cache.Add(GetKey(itemToUpdate), itemToUpdate);
             }
             else
                 _cache.Remove<T>(GetKey(item));
