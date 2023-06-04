@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Xml.XPath;
 
 namespace Tests
@@ -135,6 +136,38 @@ namespace Tests
             BuildFilterExpressionTree_PosTest();
             var _5 = expressions[5];
             var _6 = expressions[6];
+            var _A = expressions[7];
+
+            Assert.That(builder.Roots.Count(), Is.EqualTo(1));
+            builder.Add(_5);
+            Assert.That(builder.Roots.Count(), Is.EqualTo(2));
+            builder.Add(_6);
+            Assert.That(builder.Roots.Count(), Is.EqualTo(2));
+            builder.Add(_A);
+            Assert.That(builder.Roots.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void NotOperator_PosTest()
+        {
+            var currentCount = expressions.Count();
+            expressions.Add("V: !A or B");
+            Assert.That(expressions.Count(), Is.EqualTo(currentCount+1));
+
+            expressions.Add("V: !!C or D");
+            Assert.That(expressions.Count(), Is.EqualTo(currentCount+2));
+            Assert.IsNull(expressions.Last());
+        }
+
+        [Test]
+        public void ConnectDisjointTrees_NullOperatorExpression_PosTest()
+        {
+            Assert.That(builder.Roots.Count(), Is.EqualTo(0));
+            BuildFilterExpressionTree_PosTest();
+            var _5 = expressions[5];
+            var _6 = expressions[6];
+            expressions.Remove(expressions.Last());
+            expressions.Add("A: !6 or G");
             var _A = expressions[7];
 
             Assert.That(builder.Roots.Count(), Is.EqualTo(1));

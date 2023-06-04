@@ -37,7 +37,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             var (leftName, rightName) = expression.GetExpressionChildrenNames();
             var name = expression.Name;
 
-            if (HasNoValue(name))
+            if (FilterExpression.HasNoValue(name))
                 throw new ArgumentException("Expression Name expected but was null or empty", nameof(expression.Name));
 
             //if node was found, then root has value
@@ -71,15 +71,15 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
         private bool TryConnectTrees(FilterExpressionTree parent, FilterExpressionTree childNode)
         {
-            if (HasNoValue(childNode?.Expression?.Name))
+            if (FilterExpression.HasNoValue(childNode?.Expression?.Name))
                 return false;
             //just compare _roots
-            var root = _roots.FirstOrDefault(root => NamesMatch(childNode.Expression.Name, root?.Expression?.Name));
+            var root = _roots.FirstOrDefault(root => FilterExpression.NamesMatch(childNode.Expression.Name, root?.Expression?.Name));
 
             if (root != null)
             {
                 //root is ChildNode
-                var isLeftChild = NamesMatch(parent.Left.Expression.Name, childNode.Expression.Name);
+                var isLeftChild = FilterExpression.NamesMatch(parent.Left.Expression.Name, childNode.Expression.Name);
                 //childNode is only name placeholder - update with Root of disjoint tree
                 if (isLeftChild)
                     parent.Left = root;

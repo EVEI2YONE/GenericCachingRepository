@@ -1,4 +1,5 @@
-﻿using Models.FilterExpressionTreesNamespace;
+﻿using Models.FilterExpressionNamespace;
+using Models.FilterExpressionTreesNamespace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,16 +20,16 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
         public FilterExpressionTree? FindNode(FilterExpressionTree? expressionTree, string? name)
         {
-            if (HasNoValue(expressionTree?.Expression?.Name, name))
+            if (FilterExpression.HasNoValue(expressionTree?.Expression?.Name, name))
                 return null;
-            else if (NamesMatch(expressionTree.Expression.Name, name))
+            else if (FilterExpression.NamesMatch(expressionTree.Expression.Name, name))
                 return expressionTree;
 
             //establish relationship between parent and found child node
             var leftChild = FindNode(expressionTree.Left, name);
             var rightChild = FindNode(expressionTree.Right, name);
 
-            if (!parentSet && !HasNoValue(leftChild, rightChild))
+            if (!parentSet && !FilterExpression.HasNoValue(leftChild, rightChild))
             {
                 if (leftChild != null)
                 {

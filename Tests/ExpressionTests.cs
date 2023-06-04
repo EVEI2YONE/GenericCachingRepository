@@ -18,9 +18,10 @@ namespace Tests
             expression = new FilterExpression();
             expressions = new List<FilterExpression?>()
             {
-                "1: A or B",
+                "1: !A or B",
                 "2: C or D"
             };
+            Assert.That(expressions.Count(), Is.EqualTo(2));
         }
 
         [Test]
@@ -42,17 +43,19 @@ namespace Tests
             expression.Name = "0";
             expression.Value = "A or ";
             var ex = Assert.Throws<ArgumentException>(() => expression.GetExpressionChildrenNames());
-            var errorMessage = "Expression Value is not in the correct format: 'A and B', 'C or D' (Parameter 'Value')";
+            var errorMessage = "Expression Value is not in the correct format: 'A or ' (Parameter 'Value')";
             Assert.That(ex.Message, Is.EqualTo(errorMessage));
 
             //more than 2
             expression.Value = "A or A or B";
             ex = Assert.Throws<ArgumentException>(() => expression.GetExpressionChildrenNames());
+            errorMessage = "Expression Value is not in the correct format: 'A or A or B' (Parameter 'Value')";
             Assert.That(ex.Message, Is.EqualTo(errorMessage));
 
             //more than 2 expressions
             expression.Value = "A or A B";
             ex = Assert.Throws<ArgumentException>(() => expression.GetExpressionChildrenNames());
+            errorMessage = "Expression Value is not in the correct format: 'A or A B' (Parameter 'Value')";
             Assert.That(ex.Message, Is.EqualTo(errorMessage));
         }
 

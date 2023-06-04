@@ -8,6 +8,6 @@ namespace Models.EnumNamespace
 {
     public enum LogicalOperator
     {
-        And, Or
+        And, Or, Nand, Nor, Not
     }
 }
