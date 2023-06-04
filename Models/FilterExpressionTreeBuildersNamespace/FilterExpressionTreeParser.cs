@@ -10,15 +10,6 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 {
     public partial class FilterExpressionTreeBuilder
     {
-        public string? MapAlias(string alias)
-        {
-            if (string.IsNullOrWhiteSpace(alias))
-                return null;
-            if(_aliases.ContainsKey(alias))
-                return _aliases[alias];
-            return alias;
-        }
-
         private bool parentSet;
         public bool TryFindNode(FilterExpressionTree? expression, string name, string value, out FilterExpressionTree? node)
         {
@@ -35,7 +26,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                 return expressionTree;
             else if(FilterExpression.ValuesMatch(expressionTree.Expression.Value, value))
             {
-                RegisterAlias = (Name: name, Value: value);
+                _aliases[name] = expressionTree.Expression.Name;
                 return expressionTree;
             }
             //establish relationship between parent and found child node

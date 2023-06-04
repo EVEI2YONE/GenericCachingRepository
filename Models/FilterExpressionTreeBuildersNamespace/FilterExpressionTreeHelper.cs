@@ -8,12 +8,6 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 {
     public partial class FilterExpressionTreeBuilder
     {
-        public (string Name, string Value) RegisterAlias
-        {
-            set 
-            {
-                try { _aliases[value.Name] = value.Value; } catch (Exception) { }; 
-            }
-        }
+
     }
 }

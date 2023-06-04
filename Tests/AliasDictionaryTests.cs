@@ -30,7 +30,7 @@ namespace Tests
         {
             Insert_PosTest();
             var exception = Assert.Throws<ArgumentException>(() => dictionary["A"] = "B");
-            var message = "'A' already exists as an alias 'A'";
+            var message = "Invalid operation: Alias['A'] = 'B', because 'A' already exists";
             Assert.That(exception.Message, Is.EqualTo(message));
         }
 

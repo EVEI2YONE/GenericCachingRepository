@@ -214,8 +214,15 @@ namespace Tests
         [Test]
         public void AliasRegistered_PosTest()
         {
+            BuildFilterExpressionTree_PosTest();
             //0: 1 or 2
             //Z: 1 or 2
+
+            var _1 = builder.Aliases.FirstOrDefault(x => x.Key == "0").Value;
+            var _Z = builder.Aliases.FirstOrDefault(x => x.Key == "Z").Value;
+            Assert.IsNotNull(_1);
+            Assert.IsNull(_Z);
+
             var currentCount = Count;
             message = "";
             var exception = Assert.Throws<ArgumentException>(() => builder.Add("Z: 1 or 2"), message, currentCount);

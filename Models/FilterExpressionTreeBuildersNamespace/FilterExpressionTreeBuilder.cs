@@ -3,6 +3,7 @@ using Models.FilterExpressionNamespace;
 using Models.FilterExpressionTreesNamespace;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -19,8 +20,8 @@ namespace Models.FilterExpressionTreeBuildersNamespace
         private List<FilterExpressionTree> _roots = new List<FilterExpressionTree>();
         public IEnumerable<FilterExpressionTree> Roots { get { return _roots; } }
 
-        private IDictionary<string, string> _aliases = new AliasDictionary();
-        public IEnumerable<KeyValuePair<string, string>> Aliases { get => _aliases; }
+        private AliasDictionary _aliases { get; set; } = new AliasDictionary();
+        public IEnumerable<KeyValuePair<string, string>> Aliases { get => _aliases.AsEnumerable(); }
         private FilterExpressionTree CreateNode([Required] string name)
             =>
             new FilterExpressionTree()
@@ -38,9 +39,9 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                 return;
 
             var (leftName, rightName) = expression.GetExpressionChildrenNames();
-            leftName  = MapAlias(leftName);
-            rightName = MapAlias(rightName);
-            var name  = MapAlias(expression.Name);
+            leftName  = _aliases[leftName];
+            rightName = _aliases[rightName];
+            var name  = expression.Name;
 
             if (FilterExpression.HasNoValue(name))
                 throw new ArgumentException("Expression Name expected but was null or empty", nameof(expression.Name));
@@ -48,6 +49,9 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             //if node was found, then root has value
             FilterExpressionTree? node = null;
             var root = _roots.FirstOrDefault(root => TryFindNode(root, name, expression.Value, out node));
+
+            if (_aliases.IsMapped(name))
+                return;
 
             if (node != null && node.Expression?.Value != null)
             {
@@ -66,8 +70,8 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                 _roots.Add(root);
             }
 
-
             node.Expression = expression;
+            node.Expression.Name = _aliases[expression.Name];
             //create placeholders to build a single disjoint tree
             node.Left = CreateNode(leftName);
             node.Right = CreateNode(rightName);
