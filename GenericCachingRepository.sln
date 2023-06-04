@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericCachingRepository", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericCachingRepositoryTests", "GenericCachingRepositoryTests\GenericCachingRepositoryTests.csproj", "{F4501245-EB14-4B4F-84E2-A5C3AF219F8F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionTreeBuilderTests", "ExpressionTreeBuilderTests\ExpressionTreeBuilderTests.csproj", "{6D1C4FC0-E871-4A05-AEE0-15FCB1D24C8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models.cs", "Models.cs\Models.cs.csproj", "{AC02A99E-A662-4903-9812-43E6F1B2EB7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{F4501245-EB14-4B4F-84E2-A5C3AF219F8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4501245-EB14-4B4F-84E2-A5C3AF219F8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4501245-EB14-4B4F-84E2-A5C3AF219F8F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D1C4FC0-E871-4A05-AEE0-15FCB1D24C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D1C4FC0-E871-4A05-AEE0-15FCB1D24C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D1C4FC0-E871-4A05-AEE0-15FCB1D24C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D1C4FC0-E871-4A05-AEE0-15FCB1D24C8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC02A99E-A662-4903-9812-43E6F1B2EB7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC02A99E-A662-4903-9812-43E6F1B2EB7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC02A99E-A662-4903-9812-43E6F1B2EB7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC02A99E-A662-4903-9812-43E6F1B2EB7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

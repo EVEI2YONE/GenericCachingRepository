@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using Models.cs;
 using Models.cs.Helpers;
 using System;
@@ -26,6 +27,8 @@ namespace GenericCachingRepositoryTests
                 new Expression() { Name = "2", Value = "3 or D" },
                 new Expression() { Name = "3", Value = "E or 4" },
                 new Expression() { Name = "4", Value = "V or D" },
+                new Expression() { Name = "5", Value = "C or B" },
+                new Expression() { Name = "6", Value = "5 or G" },
             };
         }
 
@@ -52,8 +55,14 @@ namespace GenericCachingRepositoryTests
             return (left, right);
         }
 
+        private void ExpectAssertException(ExpressionTree left, ExpressionTree right)
+        {
+            Assert.Throws<AssertionException>(() => VerifyPlaceholders(left, null, null));
+            Assert.Throws<AssertionException>(() => VerifyPlaceholders(right, null, null));
+        }
+
         [Test]
-        public void CountChildren_PosTest()
+        public void BuildExpressionTree_PosTest()
         {
             var _0 = expressions[0];
             var _1 = expressions[1];
@@ -68,33 +77,47 @@ namespace GenericCachingRepositoryTests
 
             AssertExpressionTreeNodeEquals(expr_0, "1 or 2", "0");
             var (expr_01, expr_02) = VerifyPlaceholders(expr_0, "1", "2", isRoot: true);
+            ExpectAssertException(expr_01, expr_02);
 
             builder.Add(_1);
             AssertExpressionTreeNodeEquals(expr_01, "A or B", "1");
             var (expr_01A, expr_01B) = VerifyPlaceholders(expr_01, "A", "B");
+            ExpectAssertException(expr_01A, expr_01B);
 
             builder.Add(_2);
             AssertExpressionTreeNodeEquals(expr_02, "3 or D", "2");
             var (expr_023, expr_02D) = VerifyPlaceholders(expr_02, "3", "D");
+            ExpectAssertException(expr_023, expr_02D);
 
             builder.Add(_3);
             AssertExpressionTreeNodeEquals(expr_023, "E or 4", "3");
             var (expr_023E, expr_0234) = VerifyPlaceholders(expr_023, "E", "4");
+            ExpectAssertException(expr_023E, expr_0234);
 
             builder.Add(_4);
             AssertExpressionTreeNodeEquals(expr_0234, "V or D", "4");
             var (expr_02DV, expr_02DD) = VerifyPlaceholders(expr_0234, "V", "D");
+            ExpectAssertException(expr_02DV, expr_02DD);
         }
 
         [Test]
-        public void AddExpression_PosTest()
+        public void FindExpressionTreeNode()
         {
-            Assert.That(builder.Roots.Count(), Is.EqualTo(0));
-            for(int i = 0; i < expressions.Count; i++)
-            {
-                builder.Add(expressions[i]);
-                Assert.That(builder.Roots.Count(), Is.EqualTo(i+1));
-            }
+            BuildExpressionTree_PosTest();
+            //var node = builder.
+        }
+
+        [Test]
+        public void ConnectDisjointTrees_PosTest()
+        {
+            BuildExpressionTree_PosTest();
+            var _5 = expressions[5];
+            var _6 = expressions[6];
+
+            builder.Add(_5);
+            //AssertExpressionTreeNodeEquals(expr_0, "1 or 2", "0");
+            //var (expr_01, expr_02) = VerifyPlaceholders(expr_0, "1", "2", isRoot: true);
+            //ExpectAssertException(expr_01, expr_02);
         }
     }
 }
