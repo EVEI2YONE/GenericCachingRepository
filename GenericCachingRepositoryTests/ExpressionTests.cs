@@ -56,7 +56,7 @@ namespace GenericCachingRepositoryTests
             expression.Name = "0";
             expression.Value = "A or A";
             var ex = Assert.Throws<ArgumentException>(() => expression.GetExpressionChildrenNames());
-            var errorMessage = $"Expression is duplicated '0 : A or A' (Parameter 'expression')";
+            var errorMessage = $"Expression is duplicated '0 : A or A' (Parameter 'FilterExpression')";
             Assert.That(ex.Message, Is.EqualTo(errorMessage));
         }
 
