@@ -9,20 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
-namespace Models.cs.Helpers
+namespace Models.cs.ExpressionTreeBuilder
 {
-    public class ExpressionTreeBuilder
+    public partial class ExpressionTreeBuilder
     {
         private List<ExpressionTree> _roots = new List<ExpressionTree>();
         public IEnumerable<ExpressionTree> Roots { get { return _roots; } }
-
-        private bool NamesMatch(string? name, string? nameToCompare)
-            => HasNoValue(name, nameToCompare)
-            ? false
-            : string.Compare(name, nameToCompare, StringComparison.InvariantCultureIgnoreCase) == 0;
-
-        private bool HasNoValue(params object[] inputs)
-            => inputs.Any(input => string.IsNullOrEmpty(input?.ToString()));
 
         private ExpressionTree CreateNode([Required] string name)
         =>
@@ -85,7 +77,7 @@ namespace Models.cs.Helpers
             if (root != null)
             {
                 //root is ChildNode
-                var isLeftChild = NamesMatch(parent.Left.Expression.Name, childNode.Left.Expression.Name);
+                var isLeftChild = NamesMatch(parent.Left.Expression.Name, childNode.Expression.Name);
                 //childNode is only name placeholder - update with Root of disjoint tree
                 if (isLeftChild)
                     parent.Left = root;
@@ -98,47 +90,10 @@ namespace Models.cs.Helpers
             return false;
         }
 
-        private bool parentSet;
-        private bool TryFindNode(ExpressionTree? expression, string? name, out ExpressionTree? node)
-        {
-            parentSet = false;
-            node = FindNode(expression, name);
-            return node != null;
-        }
-
         private void SetParent(ExpressionTree parent, ExpressionTree? child)
         {
             if (child != null)
                 child.Parent = parent;
-        }
-
-        private ExpressionTree? FindNode(ExpressionTree? expressionTree, string? name)
-        {
-            if (HasNoValue(expressionTree?.Expression?.Name, name))
-                return null;
-            else if (NamesMatch(expressionTree.Expression.Name, name))
-                return expressionTree;
-
-            //establish relationship between parent and found child node
-            var leftChild = FindNode(expressionTree.Left, name);
-            var rightChild = FindNode(expressionTree.Right, name);
-
-            if (!parentSet && !HasNoValue(leftChild, rightChild))
-            {
-                if (leftChild != null)
-                {
-                    leftChild.Parent = expressionTree;
-                    expressionTree.Left = leftChild;
-                }
-                else
-                {
-                    rightChild.Parent = expressionTree;
-                    expressionTree.Right = rightChild;
-                }
-                parentSet = true;
-            }
-
-            return leftChild ?? rightChild;
         }
     }
 }
