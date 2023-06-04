@@ -11,23 +11,27 @@ namespace Models.FilterExpressionTreeBuildersNamespace
     public partial class FilterExpressionTreeBuilder
     {
         private bool parentSet;
-        public bool TryFindNode(FilterExpressionTree? expression, string? name, out FilterExpressionTree? node)
+        public bool TryFindNode(FilterExpressionTree? expression, string name, string value, out FilterExpressionTree? node)
         {
             parentSet = false;
-            node = FindNode(expression, name);
+            node = FindNode(expression, name, value);
             return node != null;
         }
 
-        public FilterExpressionTree? FindNode(FilterExpressionTree? expressionTree, string? name)
+        public FilterExpressionTree? FindNode(FilterExpressionTree? expressionTree, string? name, string? value = null)
         {
             if (FilterExpression.HasNoValue(expressionTree?.Expression?.Name, name))
                 return null;
             else if (FilterExpression.NamesMatch(expressionTree.Expression.Name, name))
                 return expressionTree;
-
+            else if(FilterExpression.ValuesMatch(expressionTree.Expression.Value, value))
+            {
+                RegisterAlias = (Name: name, Value: value);
+                return expressionTree;
+            }
             //establish relationship between parent and found child node
-            var leftChild = FindNode(expressionTree.Left, name);
-            var rightChild = FindNode(expressionTree.Right, name);
+            var leftChild = FindNode(expressionTree.Left, name, value);
+            var rightChild = FindNode(expressionTree.Right, name, value);
 
             if (!parentSet && !FilterExpression.HasNoValue(leftChild, rightChild))
             {

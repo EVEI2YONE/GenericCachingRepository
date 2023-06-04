@@ -5,6 +5,7 @@ using Models.FilterExpressionTreeBuildersNamespace;
 using Models.FilterExpressionTreesNamespace;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -160,7 +161,7 @@ namespace Tests
         }
 
         [Test]
-        public void ConnectDisjointTrees_NullOperatorExpression_PosTest()
+        public void ConnectDisjointTrees_UnderlyingNullExpression_PosTest()
         {
             Assert.That(builder.Roots.Count(), Is.EqualTo(0));
             BuildFilterExpressionTree_PosTest();
@@ -176,7 +177,43 @@ namespace Tests
             builder.Add(_6);
             Assert.That(builder.Roots.Count(), Is.EqualTo(2));
             builder.Add(_A);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(1));
+            Assert.That(builder.Roots.Count(), Is.EqualTo(1));            
+        }
+
+        [Test]
+        public void ConnectDisjointTrees_DuplicateExpressionName_NegTest()
+        {
+            //A: 6 or G  => removed
+            //A: !6 or G => inserted
+            ConnectDisjointTrees_UnderlyingNullExpression_PosTest();
+            
+            //A: 6 or G  => fail to inserted
+            var exception = Assert.Throws<ArgumentException>(() => builder.Add("A: 6 or G"));
+            Assert.That(exception.Message, Is.EqualTo("Expression Name 'A' matches 'A'"));
+
+            //E: 6 or G  => inserted
+            var currentCount = builder.Roots.Count();
+            builder.Add("E: 6 or G");
+            Assert.That(builder.Roots.Count(), Is.EqualTo(currentCount));
+        }
+
+        [Test]
+        public void ConnectDisjointTrees_DuplicateExpression_NegTest()
+        {
+            //A: !6 or G => inserted
+            //E: 6 or G  => inserted
+            ConnectDisjointTrees_DuplicateExpressionName_NegTest();
+
+            var currentCount = builder.Roots.Count();
+            var exception = Assert.Throws<ArgumentException>(() => builder.Add("Z: !6 or G"));
+            var message = "Expression 'Z' matches 'A' : '!6 or G'";
+            Assert.That(exception.Message, Is.EqualTo(message));
+            Assert.That(builder.Roots.Count(), Is.EqualTo(currentCount));
+
+            exception = Assert.Throws<ArgumentException>(() => builder.Add("Z: 6 or G"));
+            message = "Expression 'Z' matches 'E' : '6 or G'";
+            Assert.That(exception.Message, Is.EqualTo(message));
+            Assert.That(builder.Roots.Count(), Is.EqualTo(currentCount));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Models.FilterExpressionNamespace;
+﻿using Models.DictionaryNamespace;
+using Models.FilterExpressionNamespace;
 using Models.FilterExpressionTreesNamespace;
 using System;
 using System.Collections.Generic;
@@ -18,16 +19,18 @@ namespace Models.FilterExpressionTreeBuildersNamespace
         private List<FilterExpressionTree> _roots = new List<FilterExpressionTree>();
         public IEnumerable<FilterExpressionTree> Roots { get { return _roots; } }
 
+        private IDictionary<string, string> _aliases = new AliasDictionary();
+        public IEnumerable<KeyValuePair<string, string>> Aliases { get => _aliases; }
         private FilterExpressionTree CreateNode([Required] string name)
-        =>
-        new FilterExpressionTree()
-        {
-            Expression = new FilterExpression()
+            =>
+            new FilterExpressionTree()
             {
-                Name = name,
-                Value = null
-            }
-        };
+                Expression = new FilterExpression()
+                {
+                    Name = name,
+                    Value = null
+                }
+            };
 
         public void Add(FilterExpression expression)
         {
@@ -42,10 +45,16 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
             //if node was found, then root has value
             FilterExpressionTree? node = null;
-            var root = _roots.FirstOrDefault(root => TryFindNode(root, name, out node));
+            var root = _roots.FirstOrDefault(root => TryFindNode(root, name, expression.Value, out node));
 
             if (node != null && node.Expression?.Value != null)
-                throw new ArgumentException($"Expression '{name}' already has exists.");
+            {
+                if(expression.Value == node.Expression.Value)
+                    throw new ArgumentException($"Expression '{name}' matches '{node.Expression.Name}' : '{expression.Value}'");
+                else if(name == node.Expression.Name)
+                    throw new ArgumentException($"Expression Name '{name}' matches '{node.Expression.Name}'");
+                throw new ArgumentException("unknown. Unexpected matching expressions");
+            }
 
             //if root is null, then node is null. Assign node to root after creation
             if (root == null) //Disjoint Tree

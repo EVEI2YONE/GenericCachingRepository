@@ -48,12 +48,20 @@ namespace Models.FilterExpressionNamespace
             return (left, right);
         }
 
+        public static bool ValuesMatch(string value1, string value2)
+        {
+            if (HasNoValue(value1, value2))
+                return false;
+            return value1 == value2;
+        }
+
+
         public static bool NamesMatch(string? name, string? nameToCompare)
             => HasNoValue(name, nameToCompare)
             ? false
             : string.Compare(GetUnderlyingExpression(name), GetUnderlyingExpression(nameToCompare), StringComparison.InvariantCultureIgnoreCase) == 0;
 
-        public static bool HasNoValue(params object[] inputs)
+        public static bool HasNoValue(params object?[] inputs)
             => inputs.Any(input => string.IsNullOrEmpty(input?.ToString()));
 
         private static string? GetUnderlyingExpression(string expression)

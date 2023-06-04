@@ -11,6 +11,8 @@ namespace Models.RuleNamespace
     {
         public Rule? GetRule(IEnumerable<Rule> rules)
             => null;
+        public string ToString()
+            => !(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Value)) ? $"{Name}: {Value}" : string.Empty;
             //=> rules.FirstOrDefault(rule => Value == null ? false : Value.Split(typeof(LogicalOperator).GetEnumNames(), StringSplitOptions.None).Select(x => x?.Trim()).Any(split => split == null ? false : split.IndexOf(rule.Name, StringComparison.InvariantCultureIgnoreCase) > -1));
     }
 }
