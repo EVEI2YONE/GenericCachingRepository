@@ -230,24 +230,28 @@ namespace Tests
         }
 
         [Test]
-        public void ConnectDisjointTrees_DuplicateExpression_NegTest()
+        public void ConnectDisjointTrees_DuplicateExpression_RegisterAlias_NegTest()
         {
             //A: !6 or G => inserted
             //E: 6 or G  => inserted
             ConnectDisjointTrees_DuplicateExpressionName_NegTest();
 
             //Z: !6 or G => Z matches A
-            //Z registered as alias for A
             var currentCount = Count;
-            message = "Expression 'Z' matches 'A' : '!6 or G'";
+            var aliasCount = builder.Aliases.Count();
+            message = "Invalid operation: Alias['Z'] = 'A', because 'Z' already exists";
             ExpectException<ArgumentException>(() => builder.Add("Z: !6 or G"), message, currentCount);
+            AssertEquals(builder.Aliases.Count(), aliasCount+1);
         }
 
         [Test]
         public void ConnectDisjointTrees_Implicit_DuplicateExpression_NegTest()
         {
             //A now has Z as alias
-            ConnectDisjointTrees_DuplicateExpressionName_NegTest();
+            ConnectDisjointTrees_DuplicateExpression_RegisterAlias_NegTest();
+            var alias = builder.Aliases.First(x => x.Key == "Z").Value;
+            var orig = builder.GetAlias(alias);
+            AssertEquals(orig, "A");
 
             //1: A or B => currently inserted
             //V: Z or B => 'V' matches '1' because 'Z = A' => 'A or B'

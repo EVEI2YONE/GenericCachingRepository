@@ -22,11 +22,11 @@ namespace Models.FilterExpressionTreeBuildersNamespace
         {
             if (FilterExpression.HasNoValue(expressionTree?.Expression?.Name, name))
                 return null;
-            else if (FilterExpression.NamesMatch(expressionTree.Expression.Name, name))
+            else if (FilterExpression.NamesMatch(expressionTree.Expression.Name, _aliases[name]))
                 return expressionTree;
             else if(FilterExpression.ValuesMatch(expressionTree.Expression.Value, value))
             {
-                _aliases[name] = expressionTree.Expression.Name;
+                _aliases[FilterExpression.GetUnderlyingExpression(name)] = FilterExpression.GetUnderlyingExpression(expressionTree.Expression.Name);
                 return expressionTree;
             }
             //establish relationship between parent and found child node

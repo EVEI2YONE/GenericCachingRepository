@@ -64,17 +64,14 @@ namespace Models.FilterExpressionNamespace
         public static bool HasNoValue(params object?[] inputs)
             => inputs.Any(input => string.IsNullOrEmpty(input?.ToString()));
 
-        private static string? GetUnderlyingExpression(string expression)
-        {
-            if (string.IsNullOrWhiteSpace(expression))
-                return null;
-            return expression.Trim().Replace("!", "");
-        }
-        private static  void ValidateNotExpression(string expression)
+        public static string? GetUnderlyingExpression(string expression)
+            => expression?.Trim()?.Replace("!", "");
+        private static string ValidateNotExpression(string expression)
         {
             var underlyingExpresion = GetUnderlyingExpression(expression);
             if (expression.Length - underlyingExpresion?.Length > 1 || string.IsNullOrEmpty(underlyingExpresion))
                 throw new ArgumentException($"Expression has invalid number of NOT operators: '{expression}'");
+            return underlyingExpresion;
         }
     }
 }
