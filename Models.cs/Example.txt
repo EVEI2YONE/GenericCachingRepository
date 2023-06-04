@@ -1,0 +1,136 @@
+﻿Layer1 = 2 or 3
+Layer2a = A and B and C
+Layer2b = 3
+Layer3
+(A and B and C) or ((B and D and E) and (F or G or H))
+1: 2 or 3
+2: 4 and C
+4: A and B
+2: (A and B) and C
+1: ((A and B) and C) or 3
+3: 5 and 6
+5: 7 and E
+7: B and D
+5: (B and D) and E
+3: ((B and D) and E) and 6
+6: 8 or H
+8: F or G
+6: (F or G) or H
+3: ((B and D) and E) and ((F or G) or H)
+1: ((A and B) and C) or (((B and D) and E) and ((F or G) or H))
+((A and B) and C) or (((B and D) and E) and ((F or G) or H))
+
+Input:
+{
+    Expressions:
+    [
+    {
+        Name: 0
+        Expression: 1 or 2
+    },
+    {
+        Name: 1
+        Expression: 11 OR C
+    },
+    {
+        Name: 11
+        Expression: A and B
+    },
+    {
+        Name: 2
+        Expression: 21 and 22
+    },
+    {
+        Name: 21
+        Expression: 211 and E
+    },
+    {
+        Name: 211
+        Expression: B and D
+    },
+    {
+        Name: 22
+        Expression: 221 or H
+    },
+    {
+        Name: 221
+        Expression: F or G
+    }
+    ],
+    Rules
+    [
+    {
+        Name: C
+        Rule: UserName contains 'Rose'
+    },
+    {
+        Name: A
+        Rule: UserID > 3
+    },
+    {
+        Name: B
+        Rule: UserID < 500
+    },
+    {
+        Name: E
+        Rule: UserRole == 'User'
+    },
+    {
+        Name: D
+        Rule: UserID % 2 == 0
+    },
+    {
+        Name: H
+        Rule: UserRole == 'Moderator'
+    },
+    {
+        Name: F
+        Rule: UserAge < 18
+    },
+    {
+        Name: G
+        Rule: UserAge > 65
+    }
+    ]
+}
+
+Output:
+0  : 1 or 2
+1  : 11 or C
+11 : A and B
+2  : 21 and 22
+21 : 211 and E
+211: B and D
+22 : 221 or H
+221: F or G
+
+C: UserName contains 'Rose'
+A: UserID > 3
+B: UserID < 500
+E: UserRole == 'User'
+D: UserID % 2 == 0
+H: UserRole == 'Moderator'
+F: UserAge < 18
+G: UserAge > 65
+
+0  : (((UserID > 3) and (UserID < 500)) or (UserName contains 'Rose')) or ((((UserID < 500) and (UserID % 2 == 0)) and (UserRole == 'User')) and (((UserAge < 18) or (UserAge > 65)) or (UserRole == 'Moderator')))
+1  : ((UserID > 3) and (UserID < 500)) or (UserName contains 'Rose')
+11 : (UserID > 3) and (UserID < 500)
+2  : (((UserID < 500) and (UserID % 2 == 0)) and (UserRole == 'User')) and (((UserAge < 18) or (UserAge > 65)) or (UserRole == 'Moderator'))
+21 : ((UserID < 500) and (UserID % 2 == 0)) and (UserRole == 'User')
+211: (UserID < 500) and (UserID % 2 == 0)
+22 : ((UserAge < 18) or (UserAge > 65)) or (UserRole == 'Moderator')
+221: (UserAge < 18) or (UserAge > 65)
+
+
+0  : Rule(1) or Rule(2)
+1  : Rule(11) or Eval(C)
+11 : Eval(A) and Eval(B)
+2  : Rule(21) and Rule(22)
+21 : Rule(211) and Eval(E)
+211: Eval(B) and Eval(D)
+22 : Rule(221) or Eval(H)
+221: Eval(F) or Eval(G)
+
+Convert
+Filter JSON <==> (Expression/Rule) notation
