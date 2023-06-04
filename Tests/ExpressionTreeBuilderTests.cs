@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Models.FilterExpressionNamespace;
 using Models.FilterExpressionTreeBuildersNamespace;
 using Models.FilterExpressionTreesNamespace;
@@ -7,9 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace Tests
@@ -18,10 +22,12 @@ namespace Tests
     {
         FilterExpressionTreeBuilder builder;
         List<FilterExpression?> expressions;
+        string? message;
 
         [SetUp]
         public void SetUp()
         {
+            message = null;
             builder = new FilterExpressionTreeBuilder();
             expressions = new List<FilterExpression?>()
             {
@@ -34,20 +40,22 @@ namespace Tests
                 "6: 5 or G",
                 "A: 6 or G"
             };
-            Assert.That(expressions.Count(), Is.EqualTo(8));
+            AssertEquals(expressions.Count(), 8);
         }
 
-        private void AssertCount(int count) => Assert.That(builder.Roots.Count(), Is.EqualTo(count));
-        private void AssertCount(FilterExpressionTree tree, int count) => Assert.That(FilterExpressionTree.TotalChildren(tree), Is.EqualTo(count));
+        private int Count { get { return builder.Roots.Count(); } }
+        private void AssertEquals(object val1, object val2) => Assert.That(val1, Is.EqualTo(val2));
+        private void AssertCount(int count) => AssertEquals(builder.Roots.Count(), count);
+        private void AssertCount(FilterExpressionTree tree, int count) => AssertEquals(FilterExpressionTree.TotalChildren(tree), count);
         private void AssertFilterExpressionTreeNodeEquals(FilterExpressionTree FilterExpressionTree, string value, string name)
         {
             Assert.IsNotNull(FilterExpressionTree);
             Assert.IsNotNull(FilterExpressionTree.Expression);
             var expression = FilterExpressionTree.Expression;
-            Assert.That(expression.Value, Is.EqualTo(value));
-            Assert.That(expression.Name, Is.EqualTo(name));
+            AssertEquals(expression.Value, value);
+            AssertEquals(expression.Name, name);
         }
-        private (FilterExpressionTree? tree1, FilterExpressionTree? tree2) VerifyPlaceholders(FilterExpressionTree? parent,  string leftName, string rightName, string? leftValue = null, string? rightValue = null, bool isRoot = false)
+        private (FilterExpressionTree? tree1, FilterExpressionTree? tree2) VerifyPlaceholders(FilterExpressionTree? parent, string leftName, string rightName, string? leftValue = null, string? rightValue = null, bool isRoot = false)
         {
             var left = parent.Left;
             var right = parent.Right;
@@ -55,15 +63,21 @@ namespace Tests
             Assert.IsNotNull(right);
             AssertFilterExpressionTreeNodeEquals(left, leftValue, leftName);
             AssertFilterExpressionTreeNodeEquals(right, rightValue, rightName);
-            Assert.That(parent, Is.EqualTo(left.Parent));
-            Assert.That(parent, Is.EqualTo(right.Parent));
+            AssertEquals(parent, left.Parent);
+            AssertEquals(parent, right.Parent);
             return (left, right);
         }
-
         private void ExpectAssertException(FilterExpressionTree left, FilterExpressionTree right)
         {
             Assert.Throws<AssertionException>(() => VerifyPlaceholders(left, null, null));
             Assert.Throws<AssertionException>(() => VerifyPlaceholders(right, null, null));
+        }
+        private void ExpectException<T>(Action action, string message, int? count = null) where T : Exception
+        {
+            var exception = Assert.Throws<ArgumentException>(() => action.Invoke());
+            AssertEquals(exception.Message, message);
+            if (count != null)
+                AssertEquals(Count, count.Value);
         }
 
         [Test]
@@ -111,41 +125,41 @@ namespace Tests
             BuildFilterExpressionTree_PosTest();
             var node = builder.FindNode(builder.Roots.First(), "2");
             Assert.IsNotNull(node);
-            Assert.That(node.Expression.Name, Is.EqualTo("2"));
-            Assert.That(node.Expression.Value, Is.EqualTo("3 or D"));
-            Assert.That(node.Parent.Expression.Name, Is.EqualTo("0"));
-            Assert.That(node.Parent.Expression.Value, Is.EqualTo("1 or 2"));
+            AssertEquals(node.Expression.Name, "2");
+            AssertEquals(node.Expression.Value, "3 or D");
+            AssertEquals(node.Parent.Expression.Name, "0");
+            AssertEquals(node.Parent.Expression.Value, "1 or 2");
         }
 
         [Test]
         public void CreateDisjointTrees_PosTest()
         {
-            Assert.That(builder.Roots.Count(), Is.EqualTo(0));
+            AssertEquals(builder.Roots.Count(), 0);
             BuildFilterExpressionTree_PosTest();
             var _5 = expressions[5];
             var _6 = expressions[6];
 
-            Assert.That(builder.Roots.Count(), Is.EqualTo(1));
+            AssertEquals(builder.Roots.Count(), 1);
             builder.Add(_6);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(2));
+            AssertEquals(builder.Roots.Count(), 2);
         }
 
         [Test]
         public void ConnectDisjointTrees_PosTest()
         {
-            Assert.That(builder.Roots.Count(), Is.EqualTo(0));
+            AssertEquals(builder.Roots.Count(), 0);
             BuildFilterExpressionTree_PosTest();
             var _5 = expressions[5];
             var _6 = expressions[6];
             var _A = expressions[7];
 
-            Assert.That(builder.Roots.Count(), Is.EqualTo(1));
+            AssertEquals(builder.Roots.Count(), 1);
             builder.Add(_5);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(2));
+            AssertEquals(builder.Roots.Count(), 2);
             builder.Add(_6);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(2));
+            AssertEquals(builder.Roots.Count(), 2);
             builder.Add(_A);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(1));
+            AssertEquals(builder.Roots.Count(), 1);
         }
 
         [Test]
@@ -153,17 +167,17 @@ namespace Tests
         {
             var currentCount = expressions.Count();
             expressions.Add("V: !A or B");
-            Assert.That(expressions.Count(), Is.EqualTo(currentCount+1));
+            AssertEquals(expressions.Count(), currentCount + 1);
 
             expressions.Add("V: !!C or D");
-            Assert.That(expressions.Count(), Is.EqualTo(currentCount+2));
+            AssertEquals(expressions.Count(), currentCount + 2);
             Assert.IsNull(expressions.Last());
         }
 
         [Test]
         public void ConnectDisjointTrees_UnderlyingNullExpression_PosTest()
         {
-            Assert.That(builder.Roots.Count(), Is.EqualTo(0));
+            AssertEquals(builder.Roots.Count(), 0);
             BuildFilterExpressionTree_PosTest();
             var _5 = expressions[5];
             var _6 = expressions[6];
@@ -171,13 +185,13 @@ namespace Tests
             expressions.Add("A: !6 or G");
             var _A = expressions[7];
 
-            Assert.That(builder.Roots.Count(), Is.EqualTo(1));
+            AssertEquals(builder.Roots.Count(), 1);
             builder.Add(_5);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(2));
+            AssertEquals(builder.Roots.Count(), 2);
             builder.Add(_6);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(2));
+            AssertEquals(builder.Roots.Count(), 2);
             builder.Add(_A);
-            Assert.That(builder.Roots.Count(), Is.EqualTo(1));            
+            AssertEquals(builder.Roots.Count(), 1);
         }
 
         [Test]
@@ -186,15 +200,26 @@ namespace Tests
             //A: 6 or G  => removed
             //A: !6 or G => inserted
             ConnectDisjointTrees_UnderlyingNullExpression_PosTest();
-            
+
             //A: 6 or G  => fail to inserted
-            var exception = Assert.Throws<ArgumentException>(() => builder.Add("A: 6 or G"));
-            Assert.That(exception.Message, Is.EqualTo("Expression Name 'A' matches 'A'"));
+            message = "Expression Name 'A' matches 'A'";
+            ExpectException<ArgumentException>(() => builder.Add("A: 6 or G"), message);
 
             //E: 6 or G  => inserted
-            var currentCount = builder.Roots.Count();
+            var currentCount = Count;
             builder.Add("E: 6 or G");
-            Assert.That(builder.Roots.Count(), Is.EqualTo(currentCount));
+            AssertEquals(builder.Roots.Count(), currentCount);
+        }
+
+        [Test]
+        public void AliasRegistered_PosTest()
+        {
+            //0: 1 or 2
+            //Z: 1 or 2
+            var currentCount = Count;
+            message = "";
+            var exception = Assert.Throws<ArgumentException>(() => builder.Add("Z: 1 or 2"), message, currentCount);
+            //Assert.That();
         }
 
         [Test]
@@ -204,16 +229,24 @@ namespace Tests
             //E: 6 or G  => inserted
             ConnectDisjointTrees_DuplicateExpressionName_NegTest();
 
-            var currentCount = builder.Roots.Count();
-            var exception = Assert.Throws<ArgumentException>(() => builder.Add("Z: !6 or G"));
-            var message = "Expression 'Z' matches 'A' : '!6 or G'";
-            Assert.That(exception.Message, Is.EqualTo(message));
-            Assert.That(builder.Roots.Count(), Is.EqualTo(currentCount));
+            //Z: !6 or G => Z matches A
+            //Z registered as alias for A
+            var currentCount = Count;
+            message = "Expression 'Z' matches 'A' : '!6 or G'";
+            ExpectException<ArgumentException>(() => builder.Add("Z: !6 or G"), message, currentCount);
+        }
 
-            exception = Assert.Throws<ArgumentException>(() => builder.Add("Z: 6 or G"));
-            message = "Expression 'Z' matches 'E' : '6 or G'";
-            Assert.That(exception.Message, Is.EqualTo(message));
-            Assert.That(builder.Roots.Count(), Is.EqualTo(currentCount));
+        [Test]
+        public void ConnectDisjointTrees_Implicit_DuplicateExpression_NegTest()
+        {
+            //A now has Z as alias
+            ConnectDisjointTrees_DuplicateExpressionName_NegTest();
+
+            //1: A or B => currently inserted
+            //V: Z or B => 'V' matches '1' because 'Z = A' => 'A or B'
+            message = "Expression 'V' matches '1' : 'A or B'";
+            var count = Count;
+            ExpectException<ArgumentException>(() => builder.Add("V: Z or B"), message, count);
         }
     }
 }

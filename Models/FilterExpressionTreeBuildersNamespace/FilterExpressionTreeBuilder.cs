@@ -38,7 +38,9 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                 return;
 
             var (leftName, rightName) = expression.GetExpressionChildrenNames();
-            var name = expression.Name;
+            leftName  = MapAlias(leftName);
+            rightName = MapAlias(rightName);
+            var name  = MapAlias(expression.Name);
 
             if (FilterExpression.HasNoValue(name))
                 throw new ArgumentException("Expression Name expected but was null or empty", nameof(expression.Name));
