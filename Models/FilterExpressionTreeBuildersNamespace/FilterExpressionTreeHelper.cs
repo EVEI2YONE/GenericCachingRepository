@@ -17,5 +17,11 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
         public string GetAlias(string alias)
             => _aliases[alias];
+
+        public string MapExpression(FilterExpression expression)
+        {
+            var (left, op, right) = expression.ExtractTokensFromSyntax();
+            return $"{_aliases[left]} {op} {_aliases[right]}";
+        }
     }
 }

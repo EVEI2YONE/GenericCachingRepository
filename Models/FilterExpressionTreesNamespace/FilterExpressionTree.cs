@@ -14,6 +14,6 @@ namespace Models.FilterExpressionTreesNamespace
         public FilterExpressionTree? Parent { get; set; }
         public FilterExpressionTree? Left { get; set; }
         public FilterExpressionTree? Right { get; set; }
-        public FilterExpression? Expression { get; set; }
+        public FilterExpressionMetadata? Expression { get; set; }
     }
 }

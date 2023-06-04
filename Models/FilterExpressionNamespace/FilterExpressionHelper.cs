@@ -28,6 +28,12 @@ namespace Models.FilterExpressionNamespace
 
         public (string Left, string Right) GetExpressionChildrenNames()
         {
+            var (left, _, right) = ExtractTokensFromSyntax();
+            return (left, right);
+        }
+
+        public (string Left, LogicalOperator op, string Right) ExtractTokensFromSyntax()
+        {
             //get rid of spaces
             var splitTokens = Value?.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
             //check that there are 3 tokens one of which is an operator
@@ -43,9 +49,9 @@ namespace Models.FilterExpressionNamespace
             ValidateNotExpression(left);
             ValidateNotExpression(right);
 
-            Value = $"{left} {EnumHelper.MapEnum<LogicalOperator>(splitTokens.ElementAt(1)).ToLower()} {right}";
-
-            return (left, right);
+            var op = EnumHelper.GetEnum<LogicalOperator>(splitTokens.ElementAt(1));
+            Value = $"{left} {op} {right}";
+            return (splitTokens.First(), op, splitTokens.Last());
         }
 
         public static bool ValuesMatch(string value1, string value2)

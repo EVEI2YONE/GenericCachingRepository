@@ -25,7 +25,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             =>
             new FilterExpressionTree()
             {
-                Expression = new FilterExpression()
+                Expression = new FilterExpressionMetadata()
                 {
                     IsNot = hasNot,
                     Name = name,
@@ -34,12 +34,13 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             };
         public void RemoveAlias(string alias) => _aliases.RemoveAlias(alias);
 
-        public void Add(FilterExpression expression)
+        public void Add(FilterExpression Expression)
         {
-            if (expression == null)
+            if (Expression == null)
                 return;
+            FilterExpressionMetadata expression = new FilterExpressionMetadata(Expression);
 
-            var (leftName, rightName) = expression.GetExpressionChildrenNames();
+            var (leftName, rightName) = Expression.GetExpressionChildrenNames();
             var (leftNot, rightNot) = (HasNot(leftName), HasNot(rightName));
             leftName  = _aliases[NormalizeExpressionName(leftName)];
             rightName = _aliases[NormalizeExpressionName(rightName)];
@@ -50,7 +51,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
             //if node was found, then root has value
             FilterExpressionTree? node = null;
-            var root = _roots.FirstOrDefault(root => TryFindNode(root, name, expression.Value, out node));
+            var root = _roots.FirstOrDefault(root => TryFindNode(root, name, MapExpression(Expression), out node));
 
             if (node != null && node.Expression?.Value != null)
             {

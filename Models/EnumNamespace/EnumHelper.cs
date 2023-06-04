@@ -19,5 +19,11 @@ namespace Models.EnumNamespace
             else
                 return mappedName;
         }
+
+        public static T? GetEnum<T>(string? enumName) where T : Enum
+        {
+            Enum.TryParse(typeof(T), MapEnum<T>(enumName), out var e);
+            return (T?)e;
+        }
     }
 }

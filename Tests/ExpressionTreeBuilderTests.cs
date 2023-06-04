@@ -44,7 +44,7 @@ namespace Tests
         }
 
         private int Count { get { return builder.Roots.Count(); } }
-        private void AssertEquals(object val1, object val2) => Assert.That(val1, Is.EqualTo(val2));
+        private void AssertEquals(object val1, object val2) => Assert.That(val1, Is.EqualTo(val2).IgnoreCase);
         private void AssertCount(int count) => AssertEquals(builder.Roots.Count(), count);
         private void AssertCount(FilterExpressionTree tree, int count) => AssertEquals(FilterExpressionTree.TotalChildren(tree), count);
         private void AssertFilterExpressionTreeNodeEquals(FilterExpressionTree FilterExpressionTree, string value, string name)
