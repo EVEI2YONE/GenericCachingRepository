@@ -1,7 +1,7 @@
 using GenericCachingRepository.SharedCache;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
-namespace GenericCachingRepositoryTests
+namespace Tests
 {
     public class CacheTests
     {

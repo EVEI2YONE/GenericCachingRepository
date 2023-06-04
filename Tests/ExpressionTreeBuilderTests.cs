@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
-namespace GenericCachingRepositoryTests
+namespace Tests
 {
     internal class FilterExpressionTreeBuilderTests
     {
