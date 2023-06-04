@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Models.EnumNamespace;
 using Models.RulesNamespace;
 
 namespace Models.FilterExpressionNamespace
@@ -23,8 +24,7 @@ namespace Models.FilterExpressionNamespace
             return expression;
         }
 
-        private static readonly string[] logicalOperators = new string[] { "and", "or" };
-        private bool HasOperator(string token) => logicalOperators.Contains(token.ToLower());
+        private bool HasOperator(string token) => EnumHelper.MapEnum<LogicalOperator>(token) != null;
 
         public (string Left, string Right) GetExpressionChildrenNames()
         {
@@ -39,10 +39,11 @@ namespace Models.FilterExpressionNamespace
             var right = names.Last();
             if (names.First() == names.Last())
                 throw new ArgumentException($"Expression is duplicated '{Name} : {Value}'", typeof(FilterExpression).Name);
+            Value = $"{left} {EnumHelper.MapEnum<LogicalOperator>(splitTokens.ElementAt(1)).ToLower()} {right}";
             return (left, right);
         }
 
         public Rule? GetRule(IEnumerable<Rule> rules)
-            => rules.FirstOrDefault(rule => Value.Split(logicalOperators, StringSplitOptions.None).Select(x => x?.Trim()).Any(split => split == null ? false : split.IndexOf(rule.Name, StringComparison.InvariantCultureIgnoreCase) > -1));
+            => rules.FirstOrDefault(rule => Value == null ? false : Value.Split(typeof(LogicalOperator).GetEnumNames(), StringSplitOptions.None).Select(x => x?.Trim()).Any(split => split == null ? false : split.IndexOf(rule.Name, StringComparison.InvariantCultureIgnoreCase) > -1));
     }
 }

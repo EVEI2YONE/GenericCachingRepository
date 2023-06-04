@@ -23,15 +23,16 @@ namespace Tests
             builder = new FilterExpressionTreeBuilder();
             expressions = new List<FilterExpression?>()
             {
-                "0: 1 or 2",
-                "1: A or B",
-                "2: 3 or D",
-                "3: E or 4",
-                "4: V or D",
+                "0 : 1 or 2",
+                "1: A  or B",
+                "2: 3 or  D",
+                "3: E or 4 ",
+                " 4: V or D",
                 "5: C or B",
                 "6: 5 or G",
                 "A: 6 or G"
             };
+            Assert.That(expressions.Count(), Is.EqualTo(8));
         }
 
         private void AssertCount(int count) => Assert.That(builder.Roots.Count(), Is.EqualTo(count));
