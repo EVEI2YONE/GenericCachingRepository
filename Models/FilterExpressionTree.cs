@@ -16,13 +16,13 @@ namespace Models
         public FilterExpressionTree? Right { get; set; }
         public FilterExpression? Expression { get; set; }
 
-        public static int TotalChildren(FilterExpressionTree tree)
+        public static int TotalChildren(FilterExpressionTree? tree)
         {
-            if (tree == null
-                || string.IsNullOrWhiteSpace(tree.Left?.Expression?.Name)
-                || string.IsNullOrWhiteSpace(tree.Right?.Expression?.Name))
+            if (tree == null)
                 return 0;
-            return TotalChildren(tree.Left) + TotalChildren(tree.Right);
+            else if(tree.Left == null && tree.Right == null)
+                return 1;
+            return TotalChildren(tree.Left) + TotalChildren(tree.Right) + 1;
         }
     }
 }
