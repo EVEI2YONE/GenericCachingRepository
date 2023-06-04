@@ -239,9 +239,15 @@ namespace Tests
             //Z: !6 or G => Z matches A
             var currentCount = Count;
             var aliasCount = builder.Aliases.Count();
-            message = "Invalid operation: Alias['Z'] = 'A', because 'Z' already exists";
+            message = "Expression 'Z' matches 'A' : '!6 or G'";
             ExpectException<ArgumentException>(() => builder.Add("Z: !6 or G"), message, currentCount);
+
             AssertEquals(builder.Aliases.Count(), aliasCount+1);
+            //Z => A
+            var alias = builder.Aliases.FirstOrDefault(x => x.Key == "Z").Value;
+            var orig = builder.GetAlias(alias);
+            AssertEquals(orig, alias);
+            AssertEquals(orig, "A");
         }
 
         [Test]
@@ -253,6 +259,7 @@ namespace Tests
             var orig = builder.GetAlias(alias);
             AssertEquals(orig, "A");
 
+            //A = Z
             //1: A or B => currently inserted
             //V: Z or B => 'V' matches '1' because 'Z = A' => 'A or B'
             message = "Expression 'V' matches '1' : 'A or B'";

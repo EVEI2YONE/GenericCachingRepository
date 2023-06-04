@@ -39,8 +39,6 @@ namespace Models.DictionaryNamespace
                 return null;
             if (_aliases.ContainsKey(alias))
                 return _aliases[alias];
-            else
-                _aliases.Add(alias, alias);
             return alias;
         }
         public bool IsMapped(string alias) => !string.IsNullOrWhiteSpace(alias) && alias != MapAlias(alias);
