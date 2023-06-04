@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Models.FilterExpressionTreesNamespace;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.FilterExpressionTreeBuilders
+namespace Models.FilterExpressionTreeBuildersNamespace
 {
     public partial class FilterExpressionTreeBuilder
     {
@@ -15,7 +16,6 @@ namespace Models.FilterExpressionTreeBuilders
             node = FindNode(expression, name);
             return node != null;
         }
-
 
         public FilterExpressionTree? FindNode(FilterExpressionTree? expressionTree, string? name)
         {

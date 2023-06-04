@@ -1,4 +1,5 @@
-﻿using Models.FilterExpressions;
+﻿using Models.FilterExpressionNamespace;
+using Models.FilterExpressionTreesNamespace;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
-namespace Models.FilterExpressionTreeBuilders
+namespace Models.FilterExpressionTreeBuildersNamespace
 {
     public partial class FilterExpressionTreeBuilder
     {

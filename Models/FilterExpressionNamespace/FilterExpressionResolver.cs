@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Models.RulesNamespace;
 
-namespace Models.FilterExpressions
+namespace Models.FilterExpressionNamespace
 {
     public static class FilterExpressionResolver
     {

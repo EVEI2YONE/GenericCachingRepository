@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Models.RulesNamespace;
 
-namespace Models.FilterExpressions
+namespace Models.FilterExpressionNamespace
 {
     public partial class FilterExpression
     {
-        public string? Name { get; set; }
-        public string? Value { get; set; }
-
-
         private static readonly string[] logicalOperators = new string[] { "and", "or" };
         private bool HasOperator(string token) => logicalOperators.Contains(token.ToLower());
 

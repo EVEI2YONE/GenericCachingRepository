@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.FilterExpressionTreeBuilders
+namespace Models.FilterExpressionTreeBuildersNamespace
 {
-    public partial class FilterExpressionTreeBuilder
+    public  partial class FilterExpressionTreeBuilder
     {
         public static bool NamesMatch(string? name, string? nameToCompare)
             => HasNoValue(name, nameToCompare)
