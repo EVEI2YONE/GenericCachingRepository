@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.cs
+namespace Models
 {
     public class Rule
     {
@@ -14,6 +14,6 @@ namespace Models.cs
 
     public static class Rule_Extn
     {
-        
+
     }
 }

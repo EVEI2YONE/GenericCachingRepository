@@ -1,69 +1,70 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Models.cs;
-using Models.cs.ExpressionTreeBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
+using Models;
+using Models.FilterExpressions;
+using Models.FilterExpressionTreeBuilders;
 
 namespace GenericCachingRepositoryTests
 {
-    internal class ExpressionTreeBuilderTests
+    internal class FilterExpressionTreeBuilderTests
     {
-        ExpressionTreeBuilder builder;
-        List<Expression> expressions;
+        FilterExpressionTreeBuilder builder;
+        List<FilterExpression> expressions;
 
         [SetUp]
         public void SetUp()
         {
-            builder = new ExpressionTreeBuilder();
-            expressions = new List<Expression>()
+            builder = new FilterExpressionTreeBuilder();
+            expressions = new List<FilterExpression>()
             {
-                new Expression() { Name = "0", Value = "1 or 2" },
-                new Expression() { Name = "1", Value = "A or B" },
-                new Expression() { Name = "2", Value = "3 or D" },
-                new Expression() { Name = "3", Value = "E or 4" },
-                new Expression() { Name = "4", Value = "V or D" },
-                new Expression() { Name = "5", Value = "C or B" },
-                new Expression() { Name = "6", Value = "5 or G" },
-                new Expression() { Name = "A", Value = "6 or G" },
+                new FilterExpression() { Name = "0", Value = "1 or 2" },
+                new FilterExpression() { Name = "1", Value = "A or B" },
+                new FilterExpression() { Name = "2", Value = "3 or D" },
+                new FilterExpression() { Name = "3", Value = "E or 4" },
+                new FilterExpression() { Name = "4", Value = "V or D" },
+                new FilterExpression() { Name = "5", Value = "C or B" },
+                new FilterExpression() { Name = "6", Value = "5 or G" },
+                new FilterExpression() { Name = "A", Value = "6 or G" },
             };
         }
 
         private void AssertCount(int count) => Assert.That(builder.Roots.Count(), Is.EqualTo(count));
-        private void AssertCount(ExpressionTree tree, int count) => Assert.That(ExpressionTree.TotalChildren(tree), Is.EqualTo(count));
-        private void AssertExpressionTreeNodeEquals(ExpressionTree expressionTree, string value, string name)
+        private void AssertCount(FilterExpressionTree tree, int count) => Assert.That(FilterExpressionTree.TotalChildren(tree), Is.EqualTo(count));
+        private void AssertFilterExpressionTreeNodeEquals(FilterExpressionTree FilterExpressionTree, string value, string name)
         {
-            Assert.IsNotNull(expressionTree);
-            Assert.IsNotNull(expressionTree.Expression);
-            var expression = expressionTree.Expression;
+            Assert.IsNotNull(FilterExpressionTree);
+            Assert.IsNotNull(FilterExpressionTree.Expression);
+            var expression = FilterExpressionTree.Expression;
             Assert.That(expression.Value, Is.EqualTo(value));
             Assert.That(expression.Name, Is.EqualTo(name));
         }
-        private (ExpressionTree? tree1, ExpressionTree? tree2) VerifyPlaceholders(ExpressionTree? parent,  string leftName, string rightName, string? leftValue = null, string? rightValue = null, bool isRoot = false)
+        private (FilterExpressionTree? tree1, FilterExpressionTree? tree2) VerifyPlaceholders(FilterExpressionTree? parent,  string leftName, string rightName, string? leftValue = null, string? rightValue = null, bool isRoot = false)
         {
             var left = parent.Left;
             var right = parent.Right;
             Assert.IsNotNull(left);
             Assert.IsNotNull(right);
-            AssertExpressionTreeNodeEquals(left, leftValue, leftName);
-            AssertExpressionTreeNodeEquals(right, rightValue, rightName);
+            AssertFilterExpressionTreeNodeEquals(left, leftValue, leftName);
+            AssertFilterExpressionTreeNodeEquals(right, rightValue, rightName);
             Assert.That(parent, Is.EqualTo(left.Parent));
             Assert.That(parent, Is.EqualTo(right.Parent));
             return (left, right);
         }
 
-        private void ExpectAssertException(ExpressionTree left, ExpressionTree right)
+        private void ExpectAssertException(FilterExpressionTree left, FilterExpressionTree right)
         {
             Assert.Throws<AssertionException>(() => VerifyPlaceholders(left, null, null));
             Assert.Throws<AssertionException>(() => VerifyPlaceholders(right, null, null));
         }
 
         [Test]
-        public void BuildExpressionTree_PosTest()
+        public void BuildFilterExpressionTree_PosTest()
         {
             var _0 = expressions[0];
             var _1 = expressions[1];
@@ -76,35 +77,35 @@ namespace GenericCachingRepositoryTests
             Assert.IsNotNull(expr_0);
             Assert.IsNull(expr_0.Parent);
 
-            AssertExpressionTreeNodeEquals(expr_0, "1 or 2", "0");
+            AssertFilterExpressionTreeNodeEquals(expr_0, "1 or 2", "0");
             var (expr_01, expr_02) = VerifyPlaceholders(expr_0, "1", "2", isRoot: true);
             ExpectAssertException(expr_01, expr_02);
 
             builder.Add(_1);
-            AssertExpressionTreeNodeEquals(expr_01, "A or B", "1");
+            AssertFilterExpressionTreeNodeEquals(expr_01, "A or B", "1");
             var (expr_01A, expr_01B) = VerifyPlaceholders(expr_01, "A", "B");
             ExpectAssertException(expr_01A, expr_01B);
 
             builder.Add(_2);
-            AssertExpressionTreeNodeEquals(expr_02, "3 or D", "2");
+            AssertFilterExpressionTreeNodeEquals(expr_02, "3 or D", "2");
             var (expr_023, expr_02D) = VerifyPlaceholders(expr_02, "3", "D");
             ExpectAssertException(expr_023, expr_02D);
 
             builder.Add(_3);
-            AssertExpressionTreeNodeEquals(expr_023, "E or 4", "3");
+            AssertFilterExpressionTreeNodeEquals(expr_023, "E or 4", "3");
             var (expr_023E, expr_0234) = VerifyPlaceholders(expr_023, "E", "4");
             ExpectAssertException(expr_023E, expr_0234);
 
             builder.Add(_4);
-            AssertExpressionTreeNodeEquals(expr_0234, "V or D", "4");
+            AssertFilterExpressionTreeNodeEquals(expr_0234, "V or D", "4");
             var (expr_02DV, expr_02DD) = VerifyPlaceholders(expr_0234, "V", "D");
             ExpectAssertException(expr_02DV, expr_02DD);
         }
 
         [Test]
-        public void FindExpressionTreeNode()
+        public void FindFilterExpressionTreeNode()
         {
-            BuildExpressionTree_PosTest();
+            BuildFilterExpressionTree_PosTest();
             var node = builder.FindNode(builder.Roots.First(), "2");
             Assert.IsNotNull(node);
             Assert.That(node.Expression.Name, Is.EqualTo("2"));
@@ -117,7 +118,7 @@ namespace GenericCachingRepositoryTests
         public void CreateDisjointTrees_PosTest()
         {
             Assert.That(builder.Roots.Count(), Is.EqualTo(0));
-            BuildExpressionTree_PosTest();
+            BuildFilterExpressionTree_PosTest();
             var _5 = expressions[5];
             var _6 = expressions[6];
 
@@ -130,7 +131,7 @@ namespace GenericCachingRepositoryTests
         public void ConnectDisjointTrees_PosTest()
         {
             Assert.That(builder.Roots.Count(), Is.EqualTo(0));
-            BuildExpressionTree_PosTest();
+            BuildFilterExpressionTree_PosTest();
             var _5 = expressions[5];
             var _6 = expressions[6];
             var _A = expressions[7];

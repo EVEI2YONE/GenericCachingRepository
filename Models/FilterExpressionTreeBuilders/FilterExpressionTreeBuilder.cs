@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.FilterExpressions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,25 +10,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
-namespace Models.cs.ExpressionTreeBuilder
+namespace Models.FilterExpressionTreeBuilders
 {
-    public partial class ExpressionTreeBuilder
+    public partial class FilterExpressionTreeBuilder
     {
-        private List<ExpressionTree> _roots = new List<ExpressionTree>();
-        public IEnumerable<ExpressionTree> Roots { get { return _roots; } }
+        private List<FilterExpressionTree> _roots = new List<FilterExpressionTree>();
+        public IEnumerable<FilterExpressionTree> Roots { get { return _roots; } }
 
-        private ExpressionTree CreateNode([Required] string name)
+        private FilterExpressionTree CreateNode([Required] string name)
         =>
-        new ExpressionTree()
+        new FilterExpressionTree()
         {
-            Expression = new Expression()
+            Expression = new FilterExpression()
             {
                 Name = name,
                 Value = null
             }
         };
 
-        public void Add(Expression expression)
+        public void Add(FilterExpression expression)
         {
             if (expression == null)
                 return;
@@ -39,7 +40,7 @@ namespace Models.cs.ExpressionTreeBuilder
                 throw new ArgumentException("Expression Name expected but was null or empty", nameof(expression.Name));
 
             //if node was found, then root has value
-            ExpressionTree? node = null;
+            FilterExpressionTree? node = null;
             var root = _roots.FirstOrDefault(root => TryFindNode(root, name, out node));
 
             if (node != null && node.Expression?.Value != null)
@@ -67,7 +68,7 @@ namespace Models.cs.ExpressionTreeBuilder
             SetParent(node, node.Right);
         }
 
-        private bool TryConnectTrees(ExpressionTree parent, ExpressionTree childNode)
+        private bool TryConnectTrees(FilterExpressionTree parent, FilterExpressionTree childNode)
         {
             if (HasNoValue(childNode?.Expression?.Name))
                 return false;
@@ -90,7 +91,7 @@ namespace Models.cs.ExpressionTreeBuilder
             return false;
         }
 
-        private void SetParent(ExpressionTree parent, ExpressionTree? child)
+        private void SetParent(FilterExpressionTree parent, FilterExpressionTree? child)
         {
             if (child != null)
                 child.Parent = parent;

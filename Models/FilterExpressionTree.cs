@@ -4,18 +4,19 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Models.FilterExpressions;
 
-namespace Models.cs
+namespace Models
 {
     [DebuggerDisplay("{Expression?.Name ?? \"null\"} : {Expression?.Value ?? \"null\"}")]
-    public class ExpressionTree
+    public class FilterExpressionTree
     {
-        public ExpressionTree? Parent { get; set; }
-        public ExpressionTree? Left { get; set; }
-        public ExpressionTree? Right { get; set; }
-        public Expression? Expression { get; set; }
+        public FilterExpressionTree? Parent { get; set; }
+        public FilterExpressionTree? Left { get; set; }
+        public FilterExpressionTree? Right { get; set; }
+        public FilterExpression? Expression { get; set; }
 
-        public static int TotalChildren(ExpressionTree tree)
+        public static int TotalChildren(FilterExpressionTree tree)
         {
             if (tree == null
                 || string.IsNullOrWhiteSpace(tree.Left?.Expression?.Name)

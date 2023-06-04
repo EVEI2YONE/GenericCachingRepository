@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.cs.ExpressionTreeBuilder
+namespace Models.FilterExpressionTreeBuilders
 {
-    public partial class ExpressionTreeBuilder
+    public partial class FilterExpressionTreeBuilder
     {
         private bool parentSet;
-        public bool TryFindNode(ExpressionTree? expression, string? name, out ExpressionTree? node)
+        public bool TryFindNode(FilterExpressionTree? expression, string? name, out FilterExpressionTree? node)
         {
             parentSet = false;
             node = FindNode(expression, name);
@@ -17,7 +17,7 @@ namespace Models.cs.ExpressionTreeBuilder
         }
 
 
-        public ExpressionTree? FindNode(ExpressionTree? expressionTree, string? name)
+        public FilterExpressionTree? FindNode(FilterExpressionTree? expressionTree, string? name)
         {
             if (HasNoValue(expressionTree?.Expression?.Name, name))
                 return null;

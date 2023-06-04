@@ -1,8 +1,9 @@
 ﻿using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks.Dataflow;
+using Models.FilterExpressions;
 
-namespace Models.cs
+namespace Models
 {
     public class Filters
     {
@@ -10,17 +11,17 @@ namespace Models.cs
         public string Order { get; set; } //asc, desc
         public IEnumerable<string> OrderBy { get; set; }
         public IEnumerable<string> GroupBy { get; set; }
-        public IEnumerable<Expression> Expressions { get; set; }
+        public IEnumerable<FilterExpression> Expressions { get; set; }
         public IEnumerable<Rule> Rules { get; set; }
 
         private string? _hashcode = null;
-        public string ExpressionHash 
-        { 
-            get 
-            { 
+        public string ExpressionHash
+        {
+            get
+            {
                 _hashcode = _hashcode ?? Expressions?.ResolveExpressions(Rules)?.GetHashCode().ToString() ?? "_";
                 return _hashcode;
-            } 
+            }
         }
 
         public override string ToString()

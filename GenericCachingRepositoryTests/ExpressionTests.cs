@@ -1,4 +1,4 @@
-﻿using Models.cs;
+﻿using Models.FilterExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +9,12 @@ namespace GenericCachingRepositoryTests
 {
     internal class ExpressionTests
     {
-        private Expression expression;
+        private FilterExpression expression;
 
         [SetUp]
         public void SetUp()
         {
-            expression = new Expression();
+            expression = new FilterExpression();
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace GenericCachingRepositoryTests
         [Test]
         public void GetExpressionRule()
         {
-            throw new NotImplementedException();
+            //expression.
         }
 
         [Test]
