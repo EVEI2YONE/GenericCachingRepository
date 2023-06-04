@@ -65,18 +65,5 @@ namespace Tests
             var errorMessage = $"Expression is duplicated '0 : A or A' (Parameter 'FilterExpression')";
             Assert.That(ex.Message, Is.EqualTo(errorMessage));
         }
-
-        [Test]
-        public void GetExpressionRule()
-        {
-            
-            
-        }
-
-        [Test]
-        public void ResolveExpressions()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

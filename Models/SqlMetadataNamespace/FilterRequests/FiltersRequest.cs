@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks.Dataflow;
 using Models.EnumNamespace;
 using Models.FilterExpressionNamespace;
-using Models.RulesNamespace;
+using Models.RuleNamespace;
 
 namespace Models.SqlMetadataNamespace
 {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Models.EnumNamespace;
-using Models.RulesNamespace;
+using Models.RuleNamespace;
 
 namespace Models.FilterExpressionNamespace
 {
@@ -42,8 +42,5 @@ namespace Models.FilterExpressionNamespace
             Value = $"{left} {EnumHelper.MapEnum<LogicalOperator>(splitTokens.ElementAt(1)).ToLower()} {right}";
             return (left, right);
         }
-
-        public Rule? GetRule(IEnumerable<Rule> rules)
-            => rules.FirstOrDefault(rule => Value == null ? false : Value.Split(typeof(LogicalOperator).GetEnumNames(), StringSplitOptions.None).Select(x => x?.Trim()).Any(split => split == null ? false : split.IndexOf(rule.Name, StringComparison.InvariantCultureIgnoreCase) > -1));
     }
 }
