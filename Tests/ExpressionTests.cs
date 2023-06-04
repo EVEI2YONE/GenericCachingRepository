@@ -10,11 +10,17 @@ namespace Tests
     internal class ExpressionTests
     {
         private FilterExpression expression;
+        private List<FilterExpression?> expressions;
 
         [SetUp]
         public void SetUp()
         {
             expression = new FilterExpression();
+            expressions = new List<FilterExpression?>()
+            {
+                "1: A or B",
+                "2: C or D"
+            };
         }
 
         [Test]
@@ -63,7 +69,8 @@ namespace Tests
         [Test]
         public void GetExpressionRule()
         {
-            //expression.
+            
+            
         }
 
         [Test]

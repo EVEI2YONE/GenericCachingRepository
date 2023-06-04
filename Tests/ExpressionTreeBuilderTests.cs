@@ -15,22 +15,22 @@ namespace Tests
     internal class FilterExpressionTreeBuilderTests
     {
         FilterExpressionTreeBuilder builder;
-        List<FilterExpression> expressions;
+        List<FilterExpression?> expressions;
 
         [SetUp]
         public void SetUp()
         {
             builder = new FilterExpressionTreeBuilder();
-            expressions = new List<FilterExpression>()
+            expressions = new List<FilterExpression?>()
             {
-                new FilterExpression() { Name = "0", Value = "1 or 2" },
-                new FilterExpression() { Name = "1", Value = "A or B" },
-                new FilterExpression() { Name = "2", Value = "3 or D" },
-                new FilterExpression() { Name = "3", Value = "E or 4" },
-                new FilterExpression() { Name = "4", Value = "V or D" },
-                new FilterExpression() { Name = "5", Value = "C or B" },
-                new FilterExpression() { Name = "6", Value = "5 or G" },
-                new FilterExpression() { Name = "A", Value = "6 or G" },
+                "0: 1 or 2",
+                "1: A or B",
+                "2: 3 or D",
+                "3: E or 4",
+                "4: V or D",
+                "5: C or B",
+                "6: 5 or G",
+                "A: 6 or G"
             };
         }
 

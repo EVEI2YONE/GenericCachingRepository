@@ -10,6 +10,19 @@ namespace Models.FilterExpressionNamespace
 {
     public partial class FilterExpression
     {
+        public static implicit operator FilterExpression?(string? rule)
+        {
+            rule = rule?.Trim();
+            if (string.IsNullOrWhiteSpace(rule))
+                return null;
+            var ruleSections = rule.Split(':');
+            
+            var expression = new FilterExpression() { Name = ruleSections.First()?.Trim(), Value = ruleSections.Last()?.Trim()};
+            try { expression.GetExpressionChildrenNames(); }
+            catch (Exception) { return null; }
+            return expression;
+        }
+
         private static readonly string[] logicalOperators = new string[] { "and", "or" };
         private bool HasOperator(string token) => logicalOperators.Contains(token.ToLower());
 
