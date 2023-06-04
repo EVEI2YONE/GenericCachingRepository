@@ -24,7 +24,7 @@ namespace GenericCachingRepository.SharedCache
         public QueryCache(int absoluteExpirationSeconds = 300, int slidingExpirationSeconds = 60, int expirationFrequencyScanSeconds = 1)
             : base (absoluteExpirationSeconds, slidingExpirationSeconds, expirationFrequencyScanSeconds)
         {
-            Filters filters = new Filters();
+            FiltersRequest filters = new FiltersRequest();
         }
     }
 }
