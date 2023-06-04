@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericCachingRepository", "GenericCachingRepository\GenericCachingRepository.csproj", "{C6127679-6CAC-4E5B-9822-499CB051D0CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericCachingRepositoryTests", "GenericCachingRepositoryTests\GenericCachingRepositoryTests.csproj", "{D65A354F-761E-4988-8993-535C6817300B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{C6127679-6CAC-4E5B-9822-499CB051D0CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6127679-6CAC-4E5B-9822-499CB051D0CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6127679-6CAC-4E5B-9822-499CB051D0CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D65A354F-761E-4988-8993-535C6817300B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D65A354F-761E-4988-8993-535C6817300B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D65A354F-761E-4988-8993-535C6817300B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D65A354F-761E-4988-8993-535C6817300B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
