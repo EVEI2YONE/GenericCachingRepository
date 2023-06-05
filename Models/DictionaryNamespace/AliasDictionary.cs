@@ -43,6 +43,15 @@ namespace Models.DictionaryNamespace
         }
         public bool IsMapped(string alias) => !string.IsNullOrWhiteSpace(alias) && alias != MapAlias(alias);
         public void AddAlias(string? original, string? alias) => this[alias] = original;
+        public bool TryAddAlias(string? original, string? alias)
+        {
+            try
+            {
+                this[alias] = original;
+                return true;
+            }
+            catch(Exception) { return false; }
+        }
         public void RemoveAlias(string? alias)
         {
             if (string.IsNullOrWhiteSpace(alias) && _aliases.ContainsKey(alias))

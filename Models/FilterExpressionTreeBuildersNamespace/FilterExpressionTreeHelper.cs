@@ -23,5 +23,13 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             var (left, op, right) = expression.ExtractTokensFromSyntax();
             return $"{_aliases[left]} {op} {_aliases[right]}";
         }
+
+        public (string Left, string Right) NormalizeAndRegisterAliases(string leftName, string rightName)
+        {
+            var (_left, _right) = (NormalizeExpressionName(leftName), NormalizeExpressionName(rightName));
+            _aliases.TryAddAlias(_left, _left);
+            _aliases.TryAddAlias(_right, _right);
+            return (_aliases[_left], _aliases[_right]);
+        }
     }
 }

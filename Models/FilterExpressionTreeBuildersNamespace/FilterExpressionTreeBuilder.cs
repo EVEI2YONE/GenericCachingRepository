@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
@@ -42,8 +43,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
             var (leftName, rightName) = Expression.GetExpressionChildrenNames();
             var (leftNot, rightNot) = (HasNot(leftName), HasNot(rightName));
-            leftName  = _aliases[NormalizeExpressionName(leftName)];
-            rightName = _aliases[NormalizeExpressionName(rightName)];
+            (leftName, rightName) = NormalizeAndRegisterAliases(leftName, rightName);
             var name  = expression.Name;
 
             if (FilterExpression.HasNoValue(name))
@@ -75,7 +75,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             //create placeholders to build a single disjoint tree
             node.Left = CreateNode(leftName, leftNot);
             node.Right = CreateNode(rightName, rightNot);
-
+            _aliases.TryAddAlias(node.Expression.Name, node.Expression.Name);
 
             TryConnectTrees(node, node.Left);
             TryConnectTrees(node, node.Right);
