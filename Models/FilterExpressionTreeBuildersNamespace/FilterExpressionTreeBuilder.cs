@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -59,7 +60,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                     throw new ArgumentException($"Expression '{name}' matches '{node.Expression.Name}' : '{expression.Value}'");
                 else if (name == node.Expression.Name)
                     throw new ArgumentException($"Expression Name '{name}' matches '{node.Expression.Name}'");
-                else if (MapExpression(expression) == node.Expression.Value && expression.Name != node.Expression.Name)
+                else if (MapExpression(expression) == MapExpression(node.Expression.Value) && expression.Name != node.Expression.Name)
                 {
 
                     var equivalentExpressionNames = $"{expression.Name} = {node.Expression.Name}";

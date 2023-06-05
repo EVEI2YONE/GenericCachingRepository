@@ -24,7 +24,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                 return null;
             else if (FilterExpression.NamesMatch(expressionTree.Expression.Name, _aliases[name]))
                 return expressionTree;
-            else if(FilterExpression.ValuesMatch(expressionTree.Expression.Value, value))
+            else if(FilterExpression.ValuesMatch(MapExpression(expressionTree.Expression.Value), value))
             {
                 _aliases[name] = expressionTree.Expression.Name;
                 return expressionTree;

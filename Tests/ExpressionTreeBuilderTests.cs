@@ -266,5 +266,22 @@ namespace Tests
             var count = Count;
             ExpectException<ArgumentException>(() => builder.Add("K: Z or B"), message, count);
         }
+
+        [Test]
+        public void Isolated_Implicit_DuplicateExpression_NegTest()
+        {
+            var explicitDuplciatExpressionMessage = "Expression 'Z' matches 'A' : 'C Or D'";
+            var implicitDuplciatExpressionMessage = "1 = K are equivalent. 1: A Or B => A Or B, K: Z Or B => A Or B, {Z = A}";
+
+            builder.Add("A: C or D");
+            AssertEquals(builder.Aliases.Count(), 3);
+            ExpectException<ArgumentException>(() => builder.Add("Z: C or D"), explicitDuplciatExpressionMessage);
+            AssertEquals(builder.Aliases.Count(), 4);
+            AssertEquals(builder.Aliases.Last().Key, "Z");
+            AssertEquals(builder.Aliases.Last().Value, "A");
+
+            builder.Add("K: Z or B");
+            ExpectException<ArgumentException>(() => builder.Add("1: A or B"), implicitDuplciatExpressionMessage);
+        }
     }
 }
