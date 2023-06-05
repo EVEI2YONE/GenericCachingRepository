@@ -1,6 +1,7 @@
 ﻿using Models.FilterExpressionTreesNamespace;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,11 @@ namespace Models.DictionaryNamespace
     public class FilterExpressionTreeDictionary
     {
         private readonly IDictionary<string, FilterExpressionTree> _treeDictionary = new Dictionary<string, FilterExpressionTree>();
-        private List<string> _rootKeys = new List<string>();
+        private readonly List<string> _rootKeys = new List<string>();
+
+        public IEnumerable<string> RootKeys { get { return _rootKeys.AsEnumerable(); } }
+        public IEnumerable<KeyValuePair<string, FilterExpressionTree>> Entries => _treeDictionary.AsEnumerable();
+        public int Count => _treeDictionary.Count();
 
         public FilterExpressionTree? this[string key]
         {

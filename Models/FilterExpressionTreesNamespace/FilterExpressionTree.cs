@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Models.FilterExpressionTreesNamespace
 {
-    [DebuggerDisplay("{Expression?.Name ?? \"No Expression\"} : {Expression?.Value ?? \"Placeholder\"}")]
+    [DebuggerDisplay("{Expression?.Name ?? \"No Expression\", nq} : {Expression?.Value ?? \"Placeholder\", nq}")]
     public partial class FilterExpressionTree
     {
         public FilterExpressionTree? Parent { get; set; }
