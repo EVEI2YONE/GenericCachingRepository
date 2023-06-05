@@ -1,6 +1,7 @@
 ﻿using Models.DictionaryNamespace;
 using Models.FilterExpressionNamespace;
 using Models.FilterExpressionTreesNamespace;
+using Models.FilterRuleNamespace;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,13 +37,12 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             };
         public void RemoveAlias(string alias) => _aliases.RemoveAlias(alias);
 
-        public void Add(FilterExpression Expression)
-        {
-            if (Expression == null)
-                return;
-            FilterExpressionMetadata expression = new FilterExpressionMetadata(Expression);
+        public void Add(FilterExpression expression) => Add((FilterExpressionMetadata)expression);
+        public void Add(FilterRule rule) => Add((FilterExpressionMetadata)rule);
 
-            var (leftName, rightName) = Expression.GetExpressionChildrenNames();
+        private void Add(FilterExpressionMetadata expression)
+        {
+            var (leftName, rightName) = ((FilterExpression)expression).GetExpressionChildrenNames();
             var (leftNot, rightNot) = (HasNot(leftName), HasNot(rightName));
             (leftName, rightName) = NormalizeAndRegisterAliases(leftName, rightName);
             var name  = expression.Name;

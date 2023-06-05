@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks.Dataflow;
 using Models.EnumNamespace;
 using Models.FilterExpressionNamespace;
-using Models.RuleNamespace;
+using Models.FilterRuleNamespace;
 
 namespace Models.SqlMetadataNamespace
 {
@@ -13,6 +13,6 @@ namespace Models.SqlMetadataNamespace
         public IEnumerable<string>?  SortBy { get; set; }
         public IEnumerable<string>? GroupBy { get; set; }
         public IEnumerable<FilterExpression>? Expressions { get; set; }
-        public IEnumerable<Rule>? Rules { get; set; }
+        public IEnumerable<FilterRule>? Rules { get; set; }
     }
 }

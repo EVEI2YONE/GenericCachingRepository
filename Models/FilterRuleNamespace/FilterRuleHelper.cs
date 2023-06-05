@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.RuleNamespace
+namespace Models.FilterRuleNamespace
 {
-    public partial class Rule
+    public partial class FilterRule
     {
-        public Rule? GetRule(IEnumerable<Rule> rules)
+        public FilterRule? GetRule(IEnumerable<FilterRule> rules)
             => null;
         public string ToString()
             => !(string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Value)) ? $"{Name}: {Value}" : string.Empty;

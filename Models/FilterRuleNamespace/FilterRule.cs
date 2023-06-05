@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.RuleNamespace
+namespace Models.FilterRuleNamespace
 {
-    public partial class Rule
+    public partial class FilterRule
     {
         public string? Name { get; set; }
         public string? Value { get; set; }
