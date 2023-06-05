@@ -9,11 +9,6 @@ using System.Threading.Tasks;
 
 namespace Models.FilterExpressionNamespace
 {
-    public enum FilterType
-    {
-        Expression, Rule
-    }
-
     public class FilterExpressionMetadata
     {
         public static implicit operator FilterExpression?(FilterExpressionMetadata expr) => expr.expression;
