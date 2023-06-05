@@ -10,9 +10,13 @@ namespace Models.FilterExpressionNamespace
 {
     public class FilterExpressionMetadata
     {
+        public static implicit operator FilterExpression?(FilterExpressionMetadata expr) => expr.expression;
+
+        private readonly FilterExpression? expression;
         public FilterExpressionMetadata() { }
         public FilterExpressionMetadata(FilterExpression expression)
         {
+            this.expression = expression;
             Name = expression.Name;
             Value = expression.Value;
             LogicalOperator = expression.ExtractTokensFromSyntax().op;

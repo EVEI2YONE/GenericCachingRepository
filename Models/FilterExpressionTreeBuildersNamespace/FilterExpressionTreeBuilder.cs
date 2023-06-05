@@ -51,14 +51,22 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
             //if node was found, then root has value
             FilterExpressionTree? node = null;
-            var root = _roots.FirstOrDefault(root => TryFindNode(root, name, MapExpression(Expression), out node));
+            var root = _roots.FirstOrDefault(root => TryFindNode(root, name, MapExpression(expression), out node));
 
             if (node != null && node.Expression?.Value != null)
             {
-                if(expression.Value == node.Expression.Value)
+                if (expression.Value == node.Expression.Value)
                     throw new ArgumentException($"Expression '{name}' matches '{node.Expression.Name}' : '{expression.Value}'");
-                else if(name == node.Expression.Name)
+                else if (name == node.Expression.Name)
                     throw new ArgumentException($"Expression Name '{name}' matches '{node.Expression.Name}'");
+                else if (MapExpression(expression) == node.Expression.Value && expression.Name != node.Expression.Name)
+                {
+
+                    var equivalentExpressionNames = $"{expression.Name} = {node.Expression.Name}";
+                    var equivalentExpressions = MapAliasCorrelation(expression, node.Expression);
+                    var equivalentMessage = $" {equivalentExpressions}";
+                    throw new ArgumentException($"{equivalentExpressionNames} are equivalent.{equivalentMessage}");
+                }
                 throw new ArgumentException("unknown. Unexpected matching expressions");
             }
 

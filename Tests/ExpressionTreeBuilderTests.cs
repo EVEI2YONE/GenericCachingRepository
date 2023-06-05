@@ -262,9 +262,9 @@ namespace Tests
             //A = Z
             //1: A or B => currently inserted
             //V: Z or B => 'V' matches '1' because 'Z = A' => 'A or B'
-            message = "Expression 'V' matches '1' : 'A or B'";
+            message = "K = 1 are equivalent. K: Z Or B => A Or B, {Z = A}, 1: A Or B => A Or B";
             var count = Count;
-            ExpectException<ArgumentException>(() => builder.Add("V: Z or B"), message, count);
+            ExpectException<ArgumentException>(() => builder.Add("K: Z or B"), message, count);
         }
     }
 }

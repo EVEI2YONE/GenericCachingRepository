@@ -24,6 +24,24 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             return $"{_aliases[left]} {op} {_aliases[right]}";
         }
 
+        public string MapAliasCorrelation(FilterExpressionMetadata expr1, FilterExpressionMetadata expr2)
+        {
+            return $"{BeforeAndAfter(expr1)}, {BeforeAndAfter(expr2)}";
+        }
+
+        private string BeforeAndAfter(FilterExpressionMetadata expression)
+        {
+            var before = expression.Value;
+            var (left, _, right) = ((FilterExpression)expression).ExtractTokensFromSyntax();
+            var mappings = string.Join(", ", new List<string>() { left, right }
+                .Where(x => _aliases.IsMapped(x))
+                .Select(x => $"{{{x} = {_aliases[x]}}}")
+            );
+            var mappedMessage = mappings.Any() ? $", {mappings}" : string.Empty;
+            var after = MapExpression(expression.Value);
+            return $"{expression.Name}: {before} => {after}{mappedMessage}";
+        }
+
         public (string Left, string Right) NormalizeAndRegisterAliases(string leftName, string rightName)
         {
             var (_left, _right) = (NormalizeExpressionName(leftName), NormalizeExpressionName(rightName));
