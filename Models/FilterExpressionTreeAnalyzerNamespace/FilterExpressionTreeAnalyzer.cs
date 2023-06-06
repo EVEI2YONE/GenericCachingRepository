@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Models.FilterExpressionTreeAnalyzerNamespace
 {
-    public class FilterExpressionTreeAnalyzer
+    public partial class FilterExpressionTreeAnalyzer
     {
         private readonly IEnumerable<FilterExpression> expressions;
         private readonly IEnumerable<FilterRule> rules;
         private readonly FilterExpressionTreeBuilder builder;
         public FilterExpressionTreeAnalyzer(IEnumerable<FilterExpression> expressions, IEnumerable<FilterRule> rules)
         {
-            this.expressions = expressions;
+            this.expressions = NormalizeExpressions(expressions);
             this.rules = rules;
             this.builder = new FilterExpressionTreeBuilder();
         }
