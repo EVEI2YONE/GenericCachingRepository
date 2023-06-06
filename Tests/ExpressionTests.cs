@@ -9,13 +9,13 @@ namespace Tests
 {
     internal class ExpressionTests
     {
-        private FilterExpression expression;
+        private FilterExpressionMetadata expression;
         private List<FilterExpression?> expressions;
 
         [SetUp]
         public void SetUp()
         {
-            expression = new FilterExpression();
+            expression = new FilterExpressionMetadata();
             expressions = new List<FilterExpression?>()
             {
                 "1: !A or B",

@@ -20,10 +20,11 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 {
     public partial class FilterExpressionTreeBuilder
     {
-        private List<FilterExpressionTree> _roots = new List<FilterExpressionTree>();
-        public IEnumerable<FilterExpressionTree> Roots { get { return _roots; } }
-        private AliasDictionary _aliases { get; set; } = new AliasDictionary();
-        public IEnumerable<KeyValuePair<string, string>> Aliases { get => _aliases.AsEnumerable(); }
+        private void SetParent(FilterExpressionTree parent, FilterExpressionTree? child)
+        {
+            if (child != null)
+                child.Parent = parent;
+        }
         private FilterExpressionTree CreateNode([Required] string name, bool hasNot)
             =>
             new FilterExpressionTree()
@@ -35,19 +36,18 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                     Value = null
                 }
             };
-        public void RemoveAlias(string alias) => _aliases.RemoveAlias(alias);
 
         public void Add(FilterExpression expression) => Add((FilterExpressionMetadata)expression);
         public void Add(FilterRule rule) => Add((FilterExpressionMetadata)rule);
 
         private void Add(FilterExpressionMetadata expression)
         {
-            var (leftName, rightName) = ((FilterExpression)expression).GetExpressionChildrenNames();
+            var (leftName, rightName) = expression.GetExpressionChildrenNames();
             var (leftNot, rightNot) = (HasNot(leftName), HasNot(rightName));
             (leftName, rightName) = NormalizeAndRegisterAliases(leftName, rightName);
             var name  = expression.Name;
 
-            if (FilterExpression.HasNoValue(name))
+            if (FilterExpressionMetadata.HasNoValue(name))
                 throw new ArgumentException("Expression Name expected but was null or empty", nameof(expression.Name));
 
             //if node was found, then root has value
@@ -95,15 +95,15 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
         private bool TryConnectTrees(FilterExpressionTree parent, FilterExpressionTree childNode)
         {
-            if (FilterExpression.HasNoValue(childNode?.Expression?.Name))
+            if (FilterExpressionMetadata.HasNoValue(childNode?.Expression?.Name))
                 return false;
             //just compare _roots
-            var root = _roots.FirstOrDefault(root => FilterExpression.NamesMatch(childNode.Expression.Name, root?.Expression?.Name));
+            var root = _roots.FirstOrDefault(root => FilterExpressionMetadata.NamesMatch(childNode.Expression.Name, root?.Expression?.Name));
 
             if (root != null)
             {
                 //root is ChildNode
-                var isLeftChild = FilterExpression.NamesMatch(parent.Left.Expression.Name, childNode.Expression.Name);
+                var isLeftChild = FilterExpressionMetadata.NamesMatch(parent.Left.Expression.Name, childNode.Expression.Name);
                 //childNode is only name placeholder - update with Root of disjoint tree
                 if (isLeftChild)
                     parent.Left = root;
@@ -114,12 +114,6 @@ namespace Models.FilterExpressionTreeBuildersNamespace
                 return true;
             }
             return false;
-        }
-
-        private void SetParent(FilterExpressionTree parent, FilterExpressionTree? child)
-        {
-            if (child != null)
-                child.Parent = parent;
         }
     }
 }

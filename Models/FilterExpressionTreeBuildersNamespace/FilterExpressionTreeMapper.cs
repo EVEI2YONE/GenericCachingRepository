@@ -10,10 +10,10 @@ namespace Models.FilterExpressionTreeBuildersNamespace
     public partial class FilterExpressionTreeBuilder
     {
         public bool HasNot(string expressionName)
-            => FilterExpression.GetUnderlyingExpression(expressionName) != expressionName;
+            => FilterExpressionMetadata.GetUnderlyingExpression(expressionName) != expressionName;
 
         public string? NormalizeExpressionName(string expressionName)
-            => FilterExpression.GetUnderlyingExpression(expressionName);
+            => FilterExpressionMetadata.GetUnderlyingExpression(expressionName);
 
         public string GetAlias(string alias)
             => _aliases[alias];
@@ -22,7 +22,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
         {
             if (expression == null)
                 return null;
-            var (left, op, right) = expression.ExtractTokensFromSyntax();
+            var (left, op, right) = ((FilterExpressionMetadata)expression).ExtractTokensFromSyntax();
             return $"{_aliases[left]} {op} {_aliases[right]}";
         }
 
@@ -34,7 +34,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
         private string BeforeAndAfter(FilterExpressionMetadata expression)
         {
             var before = expression.Value;
-            var (left, _, right) = ((FilterExpression)expression).ExtractTokensFromSyntax();
+            var (left, _, right) = expression.ExtractTokensFromSyntax();
             var mappings = string.Join(", ", new List<string>() { left, right }
                 .Where(x => _aliases.IsMapped(x))
                 .Select(x => $"{{{x} = {_aliases[x]}}}")

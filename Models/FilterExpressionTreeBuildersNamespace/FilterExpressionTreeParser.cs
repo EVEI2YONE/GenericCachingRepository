@@ -20,11 +20,11 @@ namespace Models.FilterExpressionTreeBuildersNamespace
 
         public FilterExpressionTree? FindNode(FilterExpressionTree? expressionTree, string? name, string? value = null)
         {
-            if (FilterExpression.HasNoValue(expressionTree?.Expression?.Name, name))
+            if (FilterExpressionMetadata.HasNoValue(expressionTree?.Expression?.Name, name))
                 return null;
-            else if (FilterExpression.NamesMatch(expressionTree.Expression.Name, _aliases[name]))
+            else if (FilterExpressionMetadata.NamesMatch(expressionTree.Expression.Name, _aliases[name]))
                 return expressionTree;
-            else if(FilterExpression.ValuesMatch(MapExpression(expressionTree.Expression.Value), value))
+            else if(FilterExpressionMetadata.ValuesMatch(MapExpression(expressionTree.Expression.Value), value))
             {
                 _aliases[name] = expressionTree.Expression.Name;
                 return expressionTree;
@@ -33,7 +33,7 @@ namespace Models.FilterExpressionTreeBuildersNamespace
             var leftChild = FindNode(expressionTree.Left, name, value);
             var rightChild = FindNode(expressionTree.Right, name, value);
 
-            if (!parentSet && !FilterExpression.HasNoValue(leftChild, rightChild))
+            if (!parentSet && !FilterExpressionMetadata.HasNoValue(leftChild, rightChild))
             {
                 if (leftChild != null)
                 {

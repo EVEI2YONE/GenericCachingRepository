@@ -283,5 +283,19 @@ namespace Tests
             builder.Add("K: Z or B");
             ExpectException<ArgumentException>(() => builder.Add("1: A or B"), implicitDuplciatExpressionMessage);
         }
+
+        [Test]
+        public void Isolated_Implicit_DuplicateExpression_PosDetection_NegTest()
+        {
+            //A: Z or B : Disjoint
+            //K: 1 or B : DIsjoint
+            //Z: 2 or 3
+            //1: 2 or 3 : Expression Duplication detected, Scan Trees again
+            //1 = Z
+            //A: Z or B : Disjoint
+            //K: Z or B : Expression Duplication detected, Scan Trees again
+            //K = A, Update Alias and Expression Mapping
+
+        }
     }
 }

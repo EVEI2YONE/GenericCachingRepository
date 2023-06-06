@@ -1,4 +1,6 @@
 ﻿using Models.EnumNamespace;
+using Models.FilterExpressionTreeBuildersNamespace;
+using Models.FilterExpressionTreesNamespace;
 using Models.FilterRuleNamespace;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Models.FilterExpressionNamespace
 {
-    public class FilterExpressionMetadata
+    public partial class FilterExpressionMetadata
     {
         public static implicit operator FilterExpression?(FilterExpressionMetadata expr) => expr.expression;
         public static implicit operator FilterExpressionMetadata?(FilterExpression expr) => new FilterExpressionMetadata(expr);
@@ -28,7 +30,7 @@ namespace Models.FilterExpressionNamespace
             this.expression = expression;
             Name = expression.Name;
             Value = expression.Value;
-            LogicalOperator = expression.ExtractTokensFromSyntax().op;
+            LogicalOperator = ExtractTokensFromSyntax().op;
         }
 
         public FilterExpressionMetadata(FilterRule? rule)
@@ -41,6 +43,7 @@ namespace Models.FilterExpressionNamespace
             Value = rule.Value;
         }
 
+        public string MappedExpression { get; set; }
         public FilterType Type { get; set; }
         public LogicalOperator LogicalOperator { get; set; }
         public bool IsNot { get; set; }
