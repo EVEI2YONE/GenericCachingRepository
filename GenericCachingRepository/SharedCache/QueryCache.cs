@@ -1,5 +1,4 @@
-﻿using Models.SqlMetadataNamespace;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +23,6 @@ namespace GenericCachingRepository.SharedCache
         public QueryCache(int absoluteExpirationSeconds = 300, int slidingExpirationSeconds = 60, int expirationFrequencyScanSeconds = 1)
             : base (absoluteExpirationSeconds, slidingExpirationSeconds, expirationFrequencyScanSeconds)
         {
-            FiltersRequest filters = new FiltersRequest();
         }
     }
 }

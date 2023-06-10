@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenericCachingRepository.SharedCache;
-using Models;
 
 namespace GenericCachingRepository.SourceCache
 {
