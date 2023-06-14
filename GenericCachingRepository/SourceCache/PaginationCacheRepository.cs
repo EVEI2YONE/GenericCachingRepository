@@ -9,10 +9,14 @@ namespace GenericCachingRepository.SourceCache
 {
     public class PaginationCacheRepository
     {
+
         ICache _cache;
+        private IDictionary<Type, object> locks = new Dictionary<Type, object>();
         public PaginationCacheRepository(ICache cache)
         {
             _cache = cache;
         }
+
+
     }
 }

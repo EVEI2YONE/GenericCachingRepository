@@ -24,7 +24,6 @@ namespace GenericCachingRepository.SourceCache
 
     public class DbContextCacheRepository : IDbContextCacheRepository
     {
-        private static readonly List<Type> ValidKeyAttributes = new List<Type>() { typeof(KeyAttribute) };
         private readonly ICache _cache;
         private readonly DbContext _dbContext;
         public DbContextCacheRepository(DbContext dbContext, ICache cache)
@@ -34,12 +33,11 @@ namespace GenericCachingRepository.SourceCache
         }
 
         private object?[]? GetIds<T>(T? item) where T : class
-            => item == null ? null : typeof(T).GetProperties().Where(prop => prop.GetCustomAttributes().Any(attr => ValidKeyAttributes.Contains(attr.GetType()))).Select(prop => prop.GetValue(item)).ToArray();
-
+            => CacheKeyHelper.GetIds(item);
         private string? GetKeyIds<T>(params object?[]? ids) where T : class
-            => ids == null || !ids.Any() ? null : $"{typeof(T).Name}:{string.Join(",", ids)}";
+            => CacheKeyHelper.GetKeyIds<T>(ids);
         private string? GetKey<T>(T? item) where T : class
-            => GetKeyIds<T>(GetIds(item));
+            => CacheKeyHelper.GetKey(item);
 
         private void CopyFromTo<T>(T source, T target) where T : class
         {

@@ -14,7 +14,7 @@ namespace GenericCachingRepository.SharedCache
 
     public class Cache : ICache
     {
-        private readonly IMemoryCache cache;
+        protected readonly IMemoryCache cache;
         private readonly MemoryCacheEntryOptions memoryCacheEntryOptions;
         private readonly MemoryCacheEntryOptions dictionaryEntryOptions = new MemoryCacheEntryOptions() { Priority = CacheItemPriority.NeverRemove };
         private readonly MemoryCacheOptions cacheOptions;
