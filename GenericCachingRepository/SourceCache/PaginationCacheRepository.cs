@@ -4,17 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenericCachingRepository.SharedCache;
+using Microsoft.EntityFrameworkCore;
 
 namespace GenericCachingRepository.SourceCache
 {
     public class PaginationCacheRepository
     {
-
-        ICache _cache;
+        private DbContext _context;
+        private IQueryCache _cache;
         private IDictionary<Type, object> locks = new Dictionary<Type, object>();
-        public PaginationCacheRepository(ICache cache)
+
+        public PaginationCacheRepository(DbContext context, IQueryCache cache)
         {
             _cache = cache;
+            _context = context;
         }
 
 
