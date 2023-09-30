@@ -56,6 +56,10 @@ namespace GenericCachingRepository.SourceCache
             }
             _cache.Remove<T>(GetKeyIds<T>(ids));
         }
+        public async Task DeleteAsync<T>(T item) where T : class
+        {
+            await DeleteAsync<T>(CacheKeyHelper.GetIds(item));
+        }
 
         public async Task<T?> FindAsync<T>(params object?[]? ids) where T : class
         {
@@ -78,7 +82,8 @@ namespace GenericCachingRepository.SourceCache
                 _dbContext.Entry(itemToUpdate).State = EntityState.Detached;
                 _dbContext.Update(item);
                 await _dbContext.SaveChangesAsync();
-                _cache.Add(GetKey(itemToUpdate), itemToUpdate);
+                _cache.Remove<T>(GetKey(itemToUpdate));
+                _cache.Add(GetKey(item), item);
             }
             else
                 _cache.Remove<T>(GetKey(item));
