@@ -1,5 +1,7 @@
+using DbFirstTestProject.DataLayer.Context;
+using DbFirstTestProject.DataLayer.Entities;
 using GenericCachingRepository.SharedCache;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+using GenericCachingRepository.SourceCache;
 
 namespace Tests
 {
@@ -43,6 +45,19 @@ namespace Tests
             Assert.IsNotNull(_cache.Get<List<int>>(key));
             Assert.That(_cache.Get<List<int>>(key).Count(), Is.EqualTo(0));
             Assert.IsNull(_cache.Get<List<int>>(tempkey));
+        }
+
+        [Test]
+        public async Task Cache_Update()
+        {
+            var item = new Table1() { Col2 = "Insert"};
+            var context = new EntityProjectContext();
+            var repo = new DbContextCacheRepository(context);
+            
+            await repo.AddAsync(item);
+
+            var item2 =  new Table1() { Col1_PK = item.Col1_PK, Col2 = "Update" };
+            await repo.UpdateAsync(item2);
         }
     }
 }

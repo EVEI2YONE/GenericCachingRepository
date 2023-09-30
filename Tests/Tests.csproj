@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DbFirstTestProject\DbFirstTestProject.DataLayer\DbFirstTestProject.DataLayer.csproj" />
     <ProjectReference Include="..\GenericCachingRepository\GenericCachingRepository.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>

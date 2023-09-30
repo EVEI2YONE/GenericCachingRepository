@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericCachingRepository", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbFirstTestProject.DataLayer", "..\DbFirstTestProject\DbFirstTestProject.DataLayer\DbFirstTestProject.DataLayer.csproj", "{D454F039-6495-4C8D-8CD1-BFE40D9CD2BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77C8A0DB-98AF-45EE-9D3A-BABBBD790BB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D454F039-6495-4C8D-8CD1-BFE40D9CD2BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D454F039-6495-4C8D-8CD1-BFE40D9CD2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D454F039-6495-4C8D-8CD1-BFE40D9CD2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D454F039-6495-4C8D-8CD1-BFE40D9CD2BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

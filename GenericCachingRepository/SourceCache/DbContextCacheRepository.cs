@@ -26,10 +26,10 @@ namespace GenericCachingRepository.SourceCache
     {
         private readonly ICache _cache;
         private readonly DbContext _dbContext;
-        public DbContextCacheRepository(DbContext dbContext, ICache cache)
+        public DbContextCacheRepository(DbContext dbContext, ICache? cache = null)
         {
             _dbContext = dbContext;
-            _cache = cache;
+            _cache = cache ?? new Cache();
         }
 
         private object?[]? GetIds<T>(T? item) where T : class
@@ -38,16 +38,6 @@ namespace GenericCachingRepository.SourceCache
             => CacheKeyHelper.GetKeyIds<T>(ids);
         private string? GetKey<T>(T? item) where T : class
             => CacheKeyHelper.GetKey(item);
-
-        private void CopyFromTo<T>(T source, T target) where T : class
-        {
-            var properties = typeof(T).GetProperties();
-            foreach (var prop in properties)
-            {
-                var val = prop.GetValue(source, null);
-                prop.SetValue(val, target);
-            }
-        }
 
         public async Task AddAsync<T>(T item) where T : class
         {
@@ -85,8 +75,8 @@ namespace GenericCachingRepository.SourceCache
             var itemToUpdate = await _dbContext.FindAsync<T>(GetIds(item));
             if (itemToUpdate != null)
             {
-                CopyFromTo(item, itemToUpdate);
-                _dbContext.Update(itemToUpdate);
+                _dbContext.Entry(itemToUpdate).State = EntityState.Detached;
+                _dbContext.Update(item);
                 await _dbContext.SaveChangesAsync();
                 _cache.Add(GetKey(itemToUpdate), itemToUpdate);
             }
