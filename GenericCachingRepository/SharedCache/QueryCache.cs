@@ -10,14 +10,25 @@ using System.Threading.Tasks;
 
 namespace GenericCachingRepository.SharedCache
 {
-    //(A and B and C) or ((B and D and E) and (F or G or H))
-    //Seq1 = (A and B and C)
-    //Seq2a = (B and D and E)
-    //Seq2b = (F or G or H)
-    //Seq2 = ((B and D and E) and (F or G or H))
-    //GridModel:GroupBy:OrderBy:Asc:Block: Hash => (A and B and C):((B and D and E) and (F or G or H))
-    //GridModel:GroupBy:OrderBy:Asc:Block:(A or B or C)
-    //GridModel:GroupBy:OrderBy:Asc:Block:(A)(B)(C) //Contains operation
+    /*
+        (A and B and C) or ((B and D and E) and (F or G or H))
+        Seq1 = (A and B and C)
+        Seq2a = (B and D and E)
+        Seq2b = (F or G or H)
+        Seq2 = ((B and D and E) and (F or G or H))
+        GridModel:GroupBy:OrderBy:Asc:Block: Hash => (A and B and C):((B and D and E) and (F or G or H))
+        GridModel:GroupBy:OrderBy:Asc:Block:(A or B or C)
+        GridModel:GroupBy:OrderBy:Asc:Block:(A)(B)(C) //Contains operation
+    */
+
+    /* PARTIAL STRING SEARCH
+        declare @UserInput varchar(1000) = '1'
+    
+        select * from Table_1
+        where cast(Col_2 as varchar(100) like '%'+@UserInput+'%'
+        order by Col_1 asc, Col2 desc
+     */
+
     public interface IQueryCache : ICache
     {
         public void SaveCacheQueryResultReferences<T>(string queryKey, IEnumerable<T> list) where T : class;
