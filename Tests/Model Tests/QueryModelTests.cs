@@ -8,6 +8,7 @@ using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.Serialization;
 using GenericCachingRepository;
+using Tests.Fixtures;
 
 namespace Tests.Model_Tests
 {
@@ -99,7 +100,7 @@ namespace Tests.Model_Tests
                 Value = "C"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col1.ToString().Contains(""C"")";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -115,7 +116,7 @@ namespace Tests.Model_Tests
                 Value = "2"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col2.ToString().Contains(""2"")";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -131,7 +132,7 @@ namespace Tests.Model_Tests
                 Value = "3"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col3.ToString().Contains(""3"")";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -147,7 +148,7 @@ namespace Tests.Model_Tests
                 Value = "2023"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col4.ToString().Contains(""2023"")";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -163,7 +164,7 @@ namespace Tests.Model_Tests
                 Value = "True"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col5.ToString().Contains(""True"")";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -175,7 +176,7 @@ namespace Tests.Model_Tests
                 Value = "True"
             };
 
-            clause = where.EvaluateClause<TestWhereClass>();
+            clause = where.Evaluate<TestWhereClass>();
             expect = @"Col5 == True";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -192,7 +193,7 @@ namespace Tests.Model_Tests
                 End = "C"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col1 >= ""B"" and Col1 < ""C""";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -209,7 +210,7 @@ namespace Tests.Model_Tests
                 End = "15"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col2 >= 1 and Col2 < 15";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -226,7 +227,7 @@ namespace Tests.Model_Tests
                 End = "5.8"
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col3 >= 1.2 and Col3 < 5.8";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);
@@ -247,7 +248,7 @@ namespace Tests.Model_Tests
                 End = tomorrow.ToString()
             };
 
-            var clause = where.EvaluateClause<TestWhereClass>();
+            var clause = where.Evaluate<TestWhereClass>();
             var expect = @$"Col4 >= DateTime({yesterday.DateTimeLINQFormat()}) and Col4 < DateTime({tomorrow.DateTimeLINQFormat()})";
             AssertSame(clause, expect);
             AssertAtLeastOne(clause);

@@ -16,9 +16,13 @@ namespace GenericCachingRepository.SharedCache
         Seq2a = (B and D and E)
         Seq2b = (F or G or H)
         Seq2 = ((B and D and E) and (F or G or H))
-        GridModel:GroupBy:OrderBy:Asc:Block: Hash => (A and B and C):((B and D and E) and (F or G or H))
-        GridModel:GroupBy:OrderBy:Asc:Block:(A or B or C)
-        GridModel:GroupBy:OrderBy:Asc:Block:(A)(B)(C) //Contains operation
+
+        *** Assumes QueryKey is generated beforehand ***
+        TableName:QueryKey
+        TableName:OrderBy_Pairs:Block:Filter
+        TableName:(OrderByName,SortOrder):Block:Hash => (A and B and C):((B and D and E) and (F or G or H))
+        TableName:(OrderBy_1,Asc),(OrderBy_2,Desc):Block:(A or B or C)
+        TableName:(OrderBy_1,Asc):Block:(A)(B)(C) //Contains operation
     */
 
     /* PARTIAL STRING SEARCH
@@ -33,8 +37,8 @@ namespace GenericCachingRepository.SharedCache
     {
         public void SaveCacheQueryResultReferences<T>(string queryKey, IEnumerable<T> list) where T : class;
         public Task<IEnumerable<T>> LoadCacheQueryResults<T>(DbSet<T> dbset, string queryKey) where T : class;
-        public long GetQueryCount<T>(string whereClause) where T : class;
-        public void SetQueryCount<T>(string whereClause, long count) where T : class;
+        public long GetQueryCount<T>(string filter) where T : class;
+        public void SetQueryCount<T>(string filter, long count) where T : class;
     }
 
     public class QueryCache : Cache, IQueryCache
@@ -43,11 +47,11 @@ namespace GenericCachingRepository.SharedCache
             : base (absoluteExpirationSeconds, slidingExpirationSeconds, expirationFrequencyScanSeconds)
         {}
 
-        public void SetQueryCount<T>(string whereClause, long count) where T : class
-            => cache.Set<long>($"{typeof(T).Name}:count:{whereClause}", count);
+        public void SetQueryCount<T>(string filter, long count) where T : class
+            => cache.Set<long>($"{typeof(T).Name}:count:{filter}", count);
 
-        public long GetQueryCount<T>(string whereClause) where T : class
-            => cache.Get<long>($"{typeof(T).Name}:count:{whereClause}");
+        public long GetQueryCount<T>(string filter) where T : class
+            => cache.Get<long>($"{typeof(T).Name}:count:{filter}");
 
         public async Task<IEnumerable<T>> LoadCacheQueryResults<T>(DbSet<T> dbset, string queryKey) where T : class
         {
@@ -68,16 +72,12 @@ namespace GenericCachingRepository.SharedCache
 
                     if(item != null)
                     {
-                        //update cache
-                        this.Remove<T>(key);
-                        this.Add<T>(key, item);
                         //build reference list
                         list.Add(item);
                     }
 
                 }
             }
-
             return list;
         }
 
@@ -87,10 +87,14 @@ namespace GenericCachingRepository.SharedCache
 
             foreach(var item in list)
             {
+                var key = CacheKeyHelper.GetKey(item);
                 //store in cache
-                this.Add(CacheKeyHelper.GetKey(item), item);
+                this.Add(key, item);
                 //build reference list
-                referenceIDs.Add(CacheKeyHelper.GetIds(item));
+                var ids = CacheKeyHelper.GetIds(item);
+                referenceIDs.Add(ids);
+                //build query tracker to link CRUD operations with pagination cache
+
             }
 
             //store reference list

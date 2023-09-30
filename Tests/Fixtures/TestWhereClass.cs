@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tests.Model_Tests
+namespace Tests.Fixtures
 {
     internal class TestWhereClass
     {

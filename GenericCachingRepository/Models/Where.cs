@@ -63,7 +63,7 @@ namespace GenericCachingRepository.Models
         }
 
         public abstract string GetOperation<T>() where T : class;
-        public string EvaluateClause<T>() where T : class => GetOperation<T>();
+        public string Evaluate<T>() where T : class => GetOperation<T>();
     }
 
 
