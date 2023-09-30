@@ -10,5 +10,7 @@ namespace GenericCachingRepository.Models
     {
         public SortOrder SortOrder { get; set; } = SortOrder.Asc;
         public string Column { get; set; }
+
+        public override string ToString() => $"{Column} {SortOrder}";
     }
 }
