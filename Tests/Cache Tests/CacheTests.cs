@@ -1,6 +1,6 @@
 using GenericCachingRepository.SharedCache;
 
-namespace Tests
+namespace Tests.Cache_Tests
 {
     public class CacheTests
     {

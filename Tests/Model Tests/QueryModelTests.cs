@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.Serialization;
 using GenericCachingRepository;
 
-namespace Tests
+namespace Tests.Model_Tests
 {
     internal class QueryModelTests
     {
