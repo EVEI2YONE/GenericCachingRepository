@@ -47,12 +47,12 @@ namespace Tests.Repository_Tests
                 {
                     new Order()
                     {
-                        Column = col1,
+                        Column = col2,
                         SortOrder = SortOrder.Asc
                     },
                     new Order()
                     {
-                        Column = col2,
+                        Column = col3,
                         SortOrder = SortOrder.Asc
                     }
                 },
@@ -106,7 +106,7 @@ namespace Tests.Repository_Tests
 
             var (where, order) = query.Evaluate<Table1>();
             var expectedWhere = @$"(Col1_PK < 4144917 and Col4 == null) or (Col2 == ""Insert"") or (Col3 >= 2 and Col3 < 4)";
-            var expectedOrder = $@"Col1_PK Asc, Col2 Asc";
+            var expectedOrder = $@"Col2 Asc, Col3 Asc";
 
             AssertionHelper.AssertSame(where, expectedWhere);
             AssertionHelper.AssertSame(order, expectedOrder);
