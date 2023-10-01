@@ -1,4 +1,4 @@
-﻿using GenericCachingRepository.SourceCache;
+﻿using GenericCachingRepository.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Caching.Memory;

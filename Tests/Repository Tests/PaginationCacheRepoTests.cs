@@ -1,6 +1,6 @@
 ﻿using DbFirstTestProject.DataLayer.Context;
+using GenericCachingRepository.Repositories;
 using GenericCachingRepository.SharedCache;
-using GenericCachingRepository.SourceCache;
 using System;
 using System.Collections.Generic;
 using System.Linq;

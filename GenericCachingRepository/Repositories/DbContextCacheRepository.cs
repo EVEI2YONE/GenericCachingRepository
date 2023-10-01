@@ -1,4 +1,5 @@
-﻿using GenericCachingRepository.SharedCache;
+﻿using GenericCachingRepository.Helpers;
+using GenericCachingRepository.SharedCache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
@@ -11,7 +12,7 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenericCachingRepository.SourceCache
+namespace GenericCachingRepository.Repositories
 {
     public interface IDbContextCacheRepository
     {

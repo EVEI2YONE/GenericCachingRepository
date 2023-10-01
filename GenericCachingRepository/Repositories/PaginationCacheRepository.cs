@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using GenericCachingRepository.SharedCache;
 using Microsoft.EntityFrameworkCore;
 
-namespace GenericCachingRepository.SourceCache
+namespace GenericCachingRepository.Repositories
 {
     public class PaginationCacheRepository
     {
