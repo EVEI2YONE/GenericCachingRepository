@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenericCachingRepository.Models
 {
@@ -12,7 +7,7 @@ namespace GenericCachingRepository.Models
     {
         public IQueryable GetClause<T>(DbSet<T> dbSet, IQueryable? query = null) where T : class
         {
-            if(query == null)
+            if (query == null)
                 return dbSet.Where($"{GetOperation<T>()}");
             query = query.Where($"{GetOperation<T>()}");
             return query;
@@ -32,7 +27,7 @@ namespace GenericCachingRepository.Models
 
         public object? GetValue<T>(string column, string? value, bool containsOp = false) where T : class
         {
-            if(value == null)
+            if (value == null)
                 return null;
             var propertyInfo = typeof(T).GetProperties().FirstOrDefault(prop => prop.Name.ToLower() == column.ToLower());
             var propertyType = propertyInfo.GetUnderlyingPropertyType();
@@ -51,7 +46,7 @@ namespace GenericCachingRepository.Models
                 var op = $"DateTime({Convert.ToDateTime(value).DateTimeLINQFormat()})";
                 return op;
             }
-            else if(propertyType == typeof(bool))
+            else if (propertyType == typeof(bool))
             {
                 var op = value.ToString();
                 if (containsOp)
@@ -75,7 +70,7 @@ namespace GenericCachingRepository.Models
 
         public override string GetOperation<T>() where T : class
         {
-            switch(Operation)
+            switch (Operation)
             {
                 case ComparativeOperation.Like: return $"{Column}.ToString().Contains({GetValue<T>(Column, Value, true)})";
                 case ComparativeOperation.NotLike: return $"!{Column}.ToString().Contains({GetValue<T>(Column, Value, true)})";

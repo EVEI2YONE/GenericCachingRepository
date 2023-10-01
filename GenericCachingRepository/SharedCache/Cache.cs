@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Internal;
-using Microsoft.Extensions.Primitives;
-using System.ComponentModel;
 
 namespace GenericCachingRepository.SharedCache
 {

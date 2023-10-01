@@ -1,12 +1,6 @@
 ﻿using GenericCachingRepository.Helpers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenericCachingRepository.SharedCache
 {
@@ -44,8 +38,8 @@ namespace GenericCachingRepository.SharedCache
     public class QueryCache : Cache, IQueryCache
     {
         public QueryCache(int absoluteExpirationSeconds = 300, int slidingExpirationSeconds = 60, int expirationFrequencyScanSeconds = 1)
-            : base (absoluteExpirationSeconds, slidingExpirationSeconds, expirationFrequencyScanSeconds)
-        {}
+            : base(absoluteExpirationSeconds, slidingExpirationSeconds, expirationFrequencyScanSeconds)
+        { }
 
         public void SetQueryCount<T>(string filter, long count) where T : class
             => cache.Set<long>($"{typeof(T).Name}:count:{filter}", count);
@@ -67,10 +61,10 @@ namespace GenericCachingRepository.SharedCache
                     var key = CacheKeyHelper.GetKeyIds<T>(referenceID);
                     var item = this.Get<T>(key);
                     //check db set
-                    if(item == null)
+                    if (item == null)
                         item = await dbset.FindAsync(referenceID);
 
-                    if(item != null)
+                    if (item != null)
                     {
                         //build reference list
                         list.Add(item);
@@ -85,7 +79,7 @@ namespace GenericCachingRepository.SharedCache
         {
             var referenceIDs = new List<object[]>();
 
-            foreach(var item in list)
+            foreach (var item in list)
             {
                 var key = CacheKeyHelper.GetKey(item);
                 //store in cache

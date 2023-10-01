@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GenericCachingRepository.Models
 {
@@ -21,7 +16,7 @@ namespace GenericCachingRepository.Models
 
         public string GetSpecificClauseAsString()
         {
-            if(SpecificClauses?.Any() ?? false)
+            if (SpecificClauses?.Any() ?? false)
             {
                 return $"({string.Join(" and ", SpecificClauses)})";
             }
