@@ -14,20 +14,6 @@ namespace Tests.Model_Tests
 {
     internal class QueryModelTests
     {
-        private void AssertSame(object clause, object expect) => Assert.That(clause.ToString(), Is.EqualTo(expect.ToString()));
-        private void AssertAtLeastOne(string clause)
-        {
-            var res = list.AsQueryable().Where(clause);
-            Assert.That(res.Any(), Is.True);
-        }
-        private void AssertListOrder(List<TestWhereClass> reorderedListDynamic, List<TestWhereClass> reorderedListLINQ)
-        {
-            for (int i = 0; i < reorderedListDynamic.Count; i++)
-            {
-                Assert.That(reorderedListDynamic[i], Is.EqualTo(reorderedListLINQ[i]));
-            }
-        }
-
         List<TestWhereClass> list = new List<TestWhereClass>();
 
         [OneTimeSetUp] 
@@ -79,7 +65,7 @@ namespace Tests.Model_Tests
 
             var asc = list.AsQueryable().OrderBy(clause).ToList();
             var _list = list.OrderBy(o => o.Col1).ToList();
-            AssertListOrder(asc, _list);
+            AssertionHelper.AssertListOrder(asc, _list);
 
             order = new Order() { Column = "Col1", SortOrder = SortOrder.Desc };
             clause = order.ToString();
@@ -87,7 +73,7 @@ namespace Tests.Model_Tests
 
             asc = list.AsQueryable().OrderBy(clause).ToList();
             _list = list.OrderByDescending(o => o.Col1).ToList();
-            AssertListOrder(asc, _list);
+            AssertionHelper.AssertListOrder(asc, _list);
         }
 
         [Test]
@@ -103,8 +89,8 @@ namespace Tests.Model_Tests
             var clause = where.Evaluate<TestWhereClass>();
             //var expect = @"Col3 is null";
             var expect = @"Col3 == null";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -119,8 +105,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col1.ToString().Contains(""C"")";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -135,8 +121,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col2.ToString().Contains(""2"")";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -151,8 +137,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col3.ToString().Contains(""3"")";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -167,8 +153,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col4.ToString().Contains(""2023"")";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -183,8 +169,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col5.ToString().Contains(""True"")";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
 
             where = new WhereValue()
             {
@@ -195,8 +181,8 @@ namespace Tests.Model_Tests
 
             clause = where.Evaluate<TestWhereClass>();
             expect = @"Col5 == True";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -212,8 +198,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col1 >= ""B"" and Col1 < ""C""";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -229,8 +215,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col2 >= 1 and Col2 < 15";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -246,8 +232,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @"Col3 >= 1.2 and Col3 < 5.8";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
 
         [Test]
@@ -267,8 +253,8 @@ namespace Tests.Model_Tests
 
             var clause = where.Evaluate<TestWhereClass>();
             var expect = @$"Col4 >= DateTime({yesterday.DateTimeLINQFormat()}) and Col4 < DateTime({tomorrow.DateTimeLINQFormat()})";
-            AssertSame(clause, expect);
-            AssertAtLeastOne(clause);
+            AssertionHelper.AssertSame(clause, expect);
+            AssertionHelper.AssertAtLeastOne(list, clause);
         }
     }
 }

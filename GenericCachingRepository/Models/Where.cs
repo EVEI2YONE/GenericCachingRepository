@@ -30,7 +30,7 @@ namespace GenericCachingRepository.Models
         public object? GetValue<T>(string column, string? value, bool encloseInQuotes, params Type[] typeExceptions) where T : class
         {
             string? op = "null";
-            if (value != null)
+            if (value != null && value.ToLower() != "null")
             {
                 var propertyInfo = typeof(T).GetProperties().FirstOrDefault(prop => prop.Name.ToLower() == column.ToLower());
                 var propertyType = propertyInfo.GetUnderlyingPropertyType();
@@ -75,10 +75,10 @@ namespace GenericCachingRepository.Models
             {
                 case ComparativeOperation.Like:
                 case ComparativeOperation.NotLike:
-                    value = (string?)GetValue<T>(Column, Value, true) ?? string.Empty;
+                    value = (string?)GetValue<T>(Column, Value, true, typeof(string)) ?? string.Empty;
                     break;
                 default:
-                    value = (string?) GetValue<T>(Column, Value, false) ?? string.Empty;
+                    value = (string?) GetValue<T>(Column, Value, false, typeof(string)) ?? string.Empty;
                     break;
             }
 

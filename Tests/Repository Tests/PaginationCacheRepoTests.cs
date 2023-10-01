@@ -69,7 +69,7 @@ namespace Tests.Repository_Tests
                         new WhereValue()
                         {
                             Column = col4,
-                            Value = "null",
+                            Value = null,
                             Operation = ComparativeOperation.Equal
                         }
                     },
@@ -105,11 +105,15 @@ namespace Tests.Repository_Tests
             };
 
             var (where, order) = query.Evaluate<Table1>();
-            var expectedWhere = @$"(Col1_PK < 4144917 and Col4 is not null) or (Col2 == ""Insert"") or (Col3 >= 2 and Col3 < 4)";
+            var expectedWhere = @$"(Col1_PK < 4144917 and Col4 == null) or (Col2 == ""Insert"") or (Col3 >= 2 and Col3 < 4)";
             var expectedOrder = $@"Col1_PK Asc, Col2 Asc";
 
-            Assert.That(where, Is.EqualTo(expectedWhere));
-            Assert.That(order, Is.EqualTo(expectedOrder));
+            AssertionHelper.AssertSame(where, expectedWhere);
+            AssertionHelper.AssertSame(order, expectedOrder);
+
+            var result = _repo.GetPage<Table1>(query);
+            var list = result.Queryable.ToList();
+            AssertionHelper.AssertAtLeastOne(list, where, order);
         }
     }
 }
