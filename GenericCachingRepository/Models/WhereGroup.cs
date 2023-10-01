@@ -5,8 +5,7 @@ namespace GenericCachingRepository.Models
 {
     public interface IQueryableWhere
     {
-        public IQueryable GetSpecificClause<T>(DbSet<T> dbSet, IQueryable? query = null) where T : class;
-        public IQueryable GetOtherClause<T>(DbSet<T> dbSet, IQueryable? query = null) where T : class;
+        public IQueryable<T> EvaulateWhere<T>(DbSet<T> dbSet, IQueryable<T>? query = null) where T : class;
     }
 
     public class WhereGroup : IQueryableWhere
@@ -14,20 +13,20 @@ namespace GenericCachingRepository.Models
         public IEnumerable<WhereGroup>? OtherClauses { get; set; } // (_) OR (_) OR (_)
         public IEnumerable<Where>? SpecificClauses { get; set; } // OR (_ AND _ AND _) OR
 
-        public string GetSpecificClauseAsString()
+        public string GetSpecificClauseAsString<T>() where T : class
         {
             if (SpecificClauses?.Any() ?? false)
             {
-                return $"({string.Join(" and ", SpecificClauses)})";
+                return $"({string.Join(" and ", SpecificClauses.Select(o => o.Evaluate<T>()))})";
             }
             return string.Empty;
         }
 
-        public override string ToString()
+        private string GetWhereAsString<T>(IEnumerable<WhereGroup> groupClauses) where T : class
         {
-            OtherClauses = OtherClauses ?? new List<WhereGroup>().AsEnumerable();
-            var clause = GetSpecificClauseAsString();
-            var otherGroups = string.Join(" or ", OtherClauses
+            groupClauses = groupClauses ?? new List<WhereGroup>().AsEnumerable();
+            var clause = GetSpecificClauseAsString<T>();
+            var otherGroups = string.Join(" or ", groupClauses
                 .Select(c => $"({c?.ToString() ?? string.Empty})")
                 .Where(c => c.Length > 2)
             );
@@ -37,21 +36,15 @@ namespace GenericCachingRepository.Models
             return clause;
         }
 
-        public IQueryable GetSpecificClause<T>(DbSet<T> dbSet, IQueryable? query = null) where T : class
+        public IQueryable<T> EvaulateWhere<T>(DbSet<T> dbSet, IQueryable<T>? query = null) where T : class
         {
-            var clause = this.ToString();
+            var clause = GetWhereAsString<T>(OtherClauses);
+            var isEmpty = string.IsNullOrWhiteSpace(clause);
             if (query == null)
-                return dbSet.Where(clause);
-            query = query.Where(clause);
-            return query;
-        }
-
-        public IQueryable GetOtherClause<T>(DbSet<T> dbSet, IQueryable? query = null) where T : class
-        {
-            var clause = this.ToString();
-            if (query == null)
-                return dbSet.Where(clause);
-            query = query.Where(clause);
+            {
+                return isEmpty ? dbSet.AsQueryable() : dbSet.Where(clause);
+            }
+            query = isEmpty ? query : query.Where(clause);
             return query;
         }
     }

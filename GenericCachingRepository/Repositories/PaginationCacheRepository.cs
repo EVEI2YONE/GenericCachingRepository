@@ -1,9 +1,16 @@
-﻿using GenericCachingRepository.SharedCache;
+﻿using GenericCachingRepository.Models;
+using GenericCachingRepository.SharedCache;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace GenericCachingRepository.Repositories
 {
-    public class PaginationCacheRepository
+    public interface IPaginationCacheRepository
+    {
+        public PagedResult<T> GetPage<T>(Query? query = null) where T : class;
+    }
+
+    public class PaginationCacheRepository : IPaginationCacheRepository
     {
         private DbContext _context;
         private IQueryCache _cache;
@@ -15,6 +22,9 @@ namespace GenericCachingRepository.Repositories
             _context = context;
         }
 
-
+        public PagedResult<T> GetPage<T>(Query? query) where T : class
+        {
+            return query?.Evaluate(_context.Set<T>()) ?? new PagedResult<T>();
+        }
     }
 }
