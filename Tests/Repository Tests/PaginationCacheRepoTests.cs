@@ -36,6 +36,7 @@ namespace Tests.Repository_Tests
             var col1 = nameof(Table1.Col1_PK);
             var col2 = nameof(Table1.Col2);
             var col3 = nameof(Table1.Col3);
+            var col4 = nameof(Table1.Col4);
 
             var query = new Query()
             {
@@ -64,6 +65,12 @@ namespace Tests.Repository_Tests
                             Column = col1,
                             Value = "4144917",
                             Operation = ComparativeOperation.LessThan
+                        },
+                        new WhereValue()
+                        {
+                            Column = col4,
+                            Value = "null",
+                            Operation = ComparativeOperation.Equal
                         }
                     },
                     OtherClauses = new List<WhereGroup>()
@@ -97,10 +104,12 @@ namespace Tests.Repository_Tests
                 }
             };
 
-            var expr = query.Evaluate(_context.Table1);
-            var expected = @$"(Col1 < 4144917) or (Col2 == ""Insert"") or (Col3 >= 2 and Col3 < 4)";
+            var (where, order) = query.Evaluate<Table1>();
+            var expectedWhere = @$"(Col1_PK < 4144917 and Col4 is not null) or (Col2 == ""Insert"") or (Col3 >= 2 and Col3 < 4)";
+            var expectedOrder = $@"Col1_PK Asc, Col2 Asc";
 
-            var response = _repo.GetPage<Table1>(query);
+            Assert.That(where, Is.EqualTo(expectedWhere));
+            Assert.That(order, Is.EqualTo(expectedOrder));
         }
     }
 }

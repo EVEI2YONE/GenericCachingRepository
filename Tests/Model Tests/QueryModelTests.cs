@@ -63,7 +63,7 @@ namespace Tests.Model_Tests
                 {
                     Col1 = "Derek",
                     Col2 = 45,
-                    Col3 = 5.5f,
+                    Col3 = null,
                     Col4 = Convert.ToDateTime("9/30/2023 02:00:00 AM"),
                     Col5 = true,
                 }
@@ -88,6 +88,23 @@ namespace Tests.Model_Tests
             asc = list.AsQueryable().OrderBy(clause).ToList();
             _list = list.OrderByDescending(o => o.Col1).ToList();
             AssertListOrder(asc, _list);
+        }
+
+        [Test]
+        public void WhereValue_Null_Simple()
+        {
+            var where = new WhereValue()
+            {
+                Column = "Col3",
+                Value = null,
+                Operation = ComparativeOperation.Equal
+            };
+
+            var clause = where.Evaluate<TestWhereClass>();
+            //var expect = @"Col3 is null";
+            var expect = @"Col3 == null";
+            AssertSame(clause, expect);
+            AssertAtLeastOne(clause);
         }
 
         [Test]

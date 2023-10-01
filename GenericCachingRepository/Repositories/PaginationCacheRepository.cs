@@ -24,7 +24,7 @@ namespace GenericCachingRepository.Repositories
 
         public PagedResult<T> GetPage<T>(Query? query) where T : class
         {
-            return query?.Evaluate(_context.Set<T>()) ?? new PagedResult<T>();
+            return query?.GetPage(_context.Set<T>()) ?? new PagedResult<T>();
         }
     }
 }

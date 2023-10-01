@@ -1,12 +1,14 @@
 ﻿using GenericCachingRepository.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GenericCachingRepository.Models
 {
     public interface IQuery
     {
-        public PagedResult<T>? Evaluate<T>(DbSet<T> dbSet) where T : class;
+        public (string? WhereClause, string? OrderBy) Evaluate<T>() where T : class;
+        public PagedResult<T>? GetPage<T>(DbSet<T> dbSet) where T : class;
     }
 
     public class Query : IQuery
@@ -17,7 +19,14 @@ namespace GenericCachingRepository.Models
         public int PageSize { get; set; } = 50;
         public int RowCount { get; set; } = 500;
 
-        public PagedResult<T> Evaluate<T>(DbSet<T> dbSet) where T : class
+        public (string? WhereClause, string? OrderBy) Evaluate<T>() where T : class
+        {
+            var whereClause = Where?.GetClauseAsString<T>();
+            var order = GetOrderAsString<T>();
+            return (whereClause, order);
+        }
+
+        public PagedResult<T>? GetPage<T>(DbSet<T> dbSet) where T : class
         {
             IQueryable<T>? query = (Where == null)
                 ? dbSet.AsQueryable()
@@ -35,15 +44,6 @@ namespace GenericCachingRepository.Models
             else
                 order = string.Join(", ", PaginationHelper.GetKeyPropertyNames<T>()) + $" {SortOrder.Asc.ToString()}";
             return order;
-        }
-
-        public IQueryable<T> EvaulateOrder<T>(DbSet<T> dbSet, IQueryable<T>? query = null) where T : class
-        {
-            var order = GetOrderAsString<T>();
-            if (query == null)
-                return dbSet.OrderBy(order);
-            query = query.OrderBy(order);
-            return query;
         }
     }
 }

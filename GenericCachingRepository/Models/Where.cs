@@ -25,36 +25,31 @@ namespace GenericCachingRepository.Models
             typeof(decimal).ToString(),
         };
 
-        public object? GetValue<T>(string column, string? value, bool containsOp = false) where T : class
+        private string Quote(object? value) => $@"""{value?.ToString()}""";
+
+        public object? GetValue<T>(string column, string? value, bool encloseInQuotes, params Type[] typeExceptions) where T : class
         {
-            if (value == null)
-                return null;
-            var propertyInfo = typeof(T).GetProperties().FirstOrDefault(prop => prop.Name.ToLower() == column.ToLower());
-            var propertyType = propertyInfo.GetUnderlyingPropertyType();
+            string? op = "null";
+            if (value != null)
+            {
+                var propertyInfo = typeof(T).GetProperties().FirstOrDefault(prop => prop.Name.ToLower() == column.ToLower());
+                var propertyType = propertyInfo.GetUnderlyingPropertyType();
 
-            if (propertyType == typeof(string))
-                return $@"""{value}""";
-            else if (Numbers.Contains(propertyType.ToString()))
-            {
-                var op = value.ToString();
-                return containsOp ? @$"""{op}""" : op;
-            }
-            else if (propertyType == typeof(DateTime))
-            {
-                if (containsOp)
-                    return @$"""{value}""";
-                var op = $"DateTime({Convert.ToDateTime(value).DateTimeLINQFormat()})";
-                return op;
-            }
-            else if (propertyType == typeof(bool))
-            {
-                var op = value.ToString();
-                if (containsOp)
-                    return $@"""{op}""";
-                return op;
-            }
+                if (encloseInQuotes)
+                    op = Quote(value);
+                else if (propertyType == typeof(string))
+                    op = value;
+                else if (Numbers.Contains(propertyType.ToString()))
+                    op = value.ToString();
+                else if (propertyType == typeof(DateTime))
+                    op = $"DateTime({Convert.ToDateTime(value).DateTimeLINQFormat()})";
+                else if (propertyType == typeof(bool))
+                    op = value.ToString();
 
-            return null;
+                if(typeExceptions?.Contains(propertyType) ?? false)
+                    op = Quote(value);
+            }
+            return op;
         }
 
         public abstract string GetOperation<T>() where T : class;
@@ -68,24 +63,44 @@ namespace GenericCachingRepository.Models
         public string? Value { get; set; }
         public ComparativeOperation Operation { get; set; }
 
+        private string? Coalesce(params string?[] values) => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+
         public override string GetOperation<T>() where T : class
         {
+            string value;
+            string? nullStr = null;
+            bool containsOp = false;
+
             switch (Operation)
             {
-                case ComparativeOperation.Like: return $"{Column}.ToString().Contains({GetValue<T>(Column, Value, true)})";
-                case ComparativeOperation.NotLike: return $"!{Column}.ToString().Contains({GetValue<T>(Column, Value, true)})";
-                case ComparativeOperation.Equal: return $"{Column} == {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.NotEqual: return $"{Column} != {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.GreaterThan: return $"{Column} > {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.NotGreaterThan: return $"{Column} <= {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.GreaterThanEqual: return $"{Column} >= {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.NotGreaterThanEqual: return $"{Column} < {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.LessThan: return $"{Column} < {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.NotLessThan: return $"{Column} >= {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.LessThanEqual: return $"{Column} <= {GetValue<T>(Column, Value)}";
-                case ComparativeOperation.NotLessThanEqual: return $"{Column} > {GetValue<T>(Column, Value)}";
+                case ComparativeOperation.Like:
+                case ComparativeOperation.NotLike:
+                    value = (string?)GetValue<T>(Column, Value, true) ?? string.Empty;
+                    break;
+                default:
+                    value = (string?) GetValue<T>(Column, Value, false) ?? string.Empty;
+                    break;
+            }
+
+
+            string response;
+            switch (Operation)
+            {
+                case ComparativeOperation.Like:                 response = $"{Column}.ToString().Contains({value})";   break;
+                case ComparativeOperation.NotLike:              response = $"!{Column}.ToString().Contains({value})";  break;
+                case ComparativeOperation.Equal:                response = $"{Column} {Coalesce(nullStr, "==")} {value}";   break;
+                case ComparativeOperation.NotEqual:             response = $"{Column} {Coalesce(nullStr, "!=")} {value}";   break;
+                case ComparativeOperation.GreaterThan:          response = $"{Column} > {value}";  break;
+                case ComparativeOperation.NotGreaterThan:       response = $"{Column} <= {value}"; break;
+                case ComparativeOperation.GreaterThanEqual:     response = $"{Column} >= {value}"; break;
+                case ComparativeOperation.NotGreaterThanEqual:  response = $"{Column} < {value}";  break;
+                case ComparativeOperation.LessThan:             response = $"{Column} < {value}";  break;
+                case ComparativeOperation.NotLessThan:          response = $"{Column} >= {value}"; break;
+                case ComparativeOperation.LessThanEqual:        response = $"{Column} <= {value}"; break;
+                case ComparativeOperation.NotLessThanEqual:     response = $"{Column} > {value}";  break;
                 default: throw new NotImplementedException();
             }
+            return response.Trim();
         }
     }
 
@@ -98,10 +113,12 @@ namespace GenericCachingRepository.Models
 
         public override string GetOperation<T>() where T : class
         {
+            var start = GetValue<T>(Column, Start, false, typeof(string));
+            var end   = GetValue<T>(Column, End, false, typeof(string));
             switch (Operation)
             {
-                case RangeOperation.Between: return $"{Column} >= {GetValue<T>(Column, Start)} and {Column} < {GetValue<T>(Column, End)}";
-                case RangeOperation.NotBetween: return $"{Column} < {GetValue<T>(Column, Start)} or {Column} > {GetValue<T>(Column, End)}";
+                case RangeOperation.Between: return $"{Column} >= {start} and {Column} < {end}";
+                case RangeOperation.NotBetween: return $"{Column} < {start} or {Column} > {end}";
                 default: throw new NotImplementedException();
             }
         }
