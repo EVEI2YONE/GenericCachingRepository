@@ -91,9 +91,9 @@ namespace Tests.Cache_Tests
             var block = 0;
             var queryKey = $"{orderBy}:{block}:{clause}";
             _cache.SetQueryCount<Table1>(clause, count);
-            _cache.SaveCacheQueryResultReferences(queryKey, list);
+            _cache.SaveCacheQueryReferences(queryKey, list);
 
-            var _cacheList = (await _cache.LoadCacheQueryResults(_context.Table1, queryKey)).ToList();
+            var _cacheList = (await _cache.LoadCacheQueryReferences(_context.Table1, queryKey)).ToList();
 
             for (int i = 0; i < count; i++)
                 Assert.That(list[i], Is.EqualTo(_cacheList[i]));

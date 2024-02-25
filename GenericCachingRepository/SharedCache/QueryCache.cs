@@ -29,8 +29,8 @@ namespace GenericCachingRepository.SharedCache
 
     public interface IQueryCache : ICache
     {
-        public void SaveCacheQueryResultReferences<T>(string queryKey, IEnumerable<T> list) where T : class;
-        public Task<IEnumerable<T>> LoadCacheQueryResults<T>(DbSet<T> dbset, string queryKey) where T : class;
+        public void SaveCacheQueryReferences<T>(string queryKey, IEnumerable<T> list) where T : class;
+        public Task<IEnumerable<T>> LoadCacheQueryReferences<T>(DbSet<T> dbset, string queryKey) where T : class;
         public long GetQueryCount<T>(string filter) where T : class;
         public void SetQueryCount<T>(string filter, long count) where T : class;
     }
@@ -47,7 +47,27 @@ namespace GenericCachingRepository.SharedCache
         public long GetQueryCount<T>(string filter) where T : class
             => cache.Get<long>($"{typeof(T).Name}:count:{filter}");
 
-        public async Task<IEnumerable<T>> LoadCacheQueryResults<T>(DbSet<T> dbset, string queryKey) where T : class
+        public void SaveCacheQueryReferences<T>(string queryKey, IEnumerable<T> list) where T : class
+        {
+            var referenceIDs = new List<object[]>();
+
+            foreach (var item in list)
+            {
+                var key = CacheKeyHelper.GetKey(item);
+                //store in cache
+                this.Add(key, item);
+                //build reference list
+                var ids = CacheKeyHelper.GetIds(item);
+                referenceIDs.Add(ids);
+                //build query tracker to link CRUD operations with pagination cache
+
+            }
+
+            //store reference list
+            this.Add<List<object[]>>($"{typeof(T).Name}:{queryKey}", referenceIDs);
+        }
+
+        public async Task<IEnumerable<T>> LoadCacheQueryReferences<T>(DbSet<T> dbset, string queryKey) where T : class
         {
             //fetch reference list
             var referenceIDs = this.Get<List<object[]>>($"{typeof(T).Name}:{queryKey}");
@@ -73,26 +93,6 @@ namespace GenericCachingRepository.SharedCache
                 }
             }
             return list;
-        }
-
-        public void SaveCacheQueryResultReferences<T>(string queryKey, IEnumerable<T> list) where T : class
-        {
-            var referenceIDs = new List<object[]>();
-
-            foreach (var item in list)
-            {
-                var key = CacheKeyHelper.GetKey(item);
-                //store in cache
-                this.Add(key, item);
-                //build reference list
-                var ids = CacheKeyHelper.GetIds(item);
-                referenceIDs.Add(ids);
-                //build query tracker to link CRUD operations with pagination cache
-
-            }
-
-            //store reference list
-            this.Add<List<object[]>>($"{typeof(T).Name}:{queryKey}", referenceIDs);
         }
     }
 }
